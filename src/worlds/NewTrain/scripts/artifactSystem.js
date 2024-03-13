@@ -297,38 +297,38 @@ class Suitcase extends Artifact{
         lockEntity.setAttribute('material', 'color: #FCE6E2');
         suitcaseEntity.appendChild(lockEntity);
 
-        //DECREMENT BUTTON above the lock
+        //INCREMENT BUTTON above the lock
+        const incButton = document.createElement('a-entity');
+        incButton.setAttribute('circles-button', `type: cylinder;  button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
+        //Shortening buttons (they were too tall by default)
+        incButton.setAttribute('scale', "1.3 0.1 1.3");
+        incButton.setAttribute('rotation', `90 0 0`);
+        //-0.3 is to the left of the lock 
+        incButton.setAttribute('position', `${xOffset} 0.15 0.3`); 
+        //IF CLICK
+        incButton.addEventListener('click', () => {
+            //performs decrement method/function of the Suitcase
+            this.increment(digitIndex);
+            //Update the displayed digit-text within array (to map to digit-text UI)
+            digitText.setAttribute('value', this.digits[digitIndex].toString()); 
+        });
+        suitcaseEntity.appendChild(incButton);
+
+        //DECREMENT BUTTON below the lock digits
         const decButton = document.createElement('a-entity');
         decButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
         //Shortening buttons (they were too tall by default)
         decButton.setAttribute('scale', "1.3 0.1 1.3");
         decButton.setAttribute('rotation', `90 0 0`);
-        //-0.3 is to the left of the lock 
-        decButton.setAttribute('position', `${xOffset} 0.15 0.3`); 
+        // Keep x same as decrement button, adjust y downwards
+        decButton.setAttribute('position', `${xOffset} -0.15 0.3`); 
         //IF CLICK
         decButton.addEventListener('click', () => {
-            //performs decrement method/function of the Suitcase
+            //do decrement() method of suitcase class
             this.decrement(digitIndex);
-            //Update the displayed digit-text within array (to map to digit-text UI)
-            digitText.setAttribute('value', this.digits[digitIndex].toString()); 
-        });
-        suitcaseEntity.appendChild(decButton);
-
-        //INCREMENT BUTTON below the lock digits
-        const incButton = document.createElement('a-entity');
-        incButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
-        //Shortening buttons (they were too tall by default)
-        incButton.setAttribute('scale', "1.3 0.1 1.3");
-        incButton.setAttribute('rotation', `90 0 0`);
-        // Keep x same as decrement button, adjust y downwards
-        incButton.setAttribute('position', `${xOffset} -0.15 0.3`); 
-        //IF CLICK
-        incButton.addEventListener('click', () => {
-            //do increment() method of suitcase class
-            this.increment(digitIndex);
             digitText.setAttribute('value', this.digits[digitIndex].toString()); // Update displayed digit
         });
-        suitcaseEntity.appendChild(incButton);
+        suitcaseEntity.appendChild(decButton);
 
     }
 
