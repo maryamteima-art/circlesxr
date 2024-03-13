@@ -19,6 +19,7 @@ export class ControllerSystem {
     //VR: "" key, "key" and Gaze
     //For Incrementing, Decrementing, Grabbing, and Selection Actions 
     handleInput(){
+        console.log("Handle Input Activated");
         // Function to activate all inputs for all devices (no need to determine device type since it can all be listened to all at one)
         this.setupVRInput();
         this.setupDesktopInput();
@@ -72,11 +73,12 @@ export class ControllerSystem {
 
     setupDesktopInput(){
         //Setup Event Key Listeners
+        
         window.addEventListener('keydown', (event) => {
             switch(event.key) {
                 case "j": console.log(`${event.key} pressed`); this.gameSystem.handleInputAction('DECREMENT'); console.log('DECREMENT detected');break;
                 case "k": console.log(`${event.key} pressed`); this.gameSystem.handleInputAction('INCREMENT'); console.log('INCREMENT detected');break;
-                // Add more as needed
+                case "l": console.log(`${event.key} pressed`); this.gameSystem.handleInputAction('SELECT'); console.log('SELECT detected');break;
             }
         });
 

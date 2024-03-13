@@ -1,43 +1,47 @@
-//Bridges actions obtained from controllerSetup.js (raw inputs to INCREMENT, DECRMENT, GRAB, and SELECT actions/keywords) with artifacts unique methods for each action (grab(), increment(), decrement(), select(). 
+//Bridges actions obtained from controllerSystem.js (raw inputs to INCREMENT, DECRMENT, GRAB, and SELECT actions/keywords) with artifacts unique methods for each action (grab(), increment(), decrement(), select(). 
 //I.e for clock increment() moves handles clockwise, and decrement() counterclockwise. I.e For suitcase increment() moves lock-digits up and decrement moves lock-digits down. I.e grab() for grabbables like thread inputs artifact's Id to player's inventory[] array and triggers "thread" boolean/flag. I.e grab() for coupon inputs couponId to player's inventory[] array and triggers "coupon" flag/boolean 
 
 import { ArtifactSystem } from './artifactSystem.js';
 import { ControllerSystem } from './controllerSystem.js';
 import { MultiplayerModule } from './multiplayerModule.js';
 
+//const eventEmitter = new EventEmitter();
+
+
 export class GameSystem {
     constructor() {
-        //this.artifactSystem = new ArtifactSystem();
+        //Initialize Systems
+        this.artifactSystem = new ArtifactSystem();
         // Pass GameSystem instance (for back-reference)
         this.controllerSystem = new ControllerSystem(this);
-        //this.multiplayerModule = new MultiplayerModule();
         console.log("GameSystem initialized");
     }
     //Initial game setup
     initialize() {
-        // Setup device detection
-        this.controllerSetup.handleInput();
-        
-        // Initialize and load artifacts
-        this.artifactSystem = new ArtifactSystem();
+        //LOAD FIRST THEN DETECT INPUTS, otherwise it gives error since there's nothing to detect
+        // Initialize and load artifacts 
         this.artifactSystem.loadArtifacts();
-        
+        // Setup device detection
+        this.controllerSystem.handleInput();
         console.log("Game initialized and ready");
     }
 
     //Maps "click, keys, swipes" actions to artifact methods
     handleInputAction(action) {
         console.log(`Action received: ${action}`);
-        
-        //**********EDIT LATER************/
-        console.log(`Action received: ${action}`);
+    
+        // Obtain player's position
         const playerPos = this.playerPosition();
-        //returns the object in proximity
+        
+        // Attempt to find an artifact in proximity based on the player's position
         const artifactDetected = this.artifactSystem.findArtifactInProximity(playerPos);
-        //If object's returned
+        
+        // Check if an artifact was found
         if (artifactDetected) {
-            //Perform its increment, decrement or grab methods depending on player input
-            this.artifactSystem.handleArtifactAction(artifact, action);
+            console.log("Artifact in proximity for interaction:", artifactDetected);
+            
+            // Call handleArtifactAction with the found artifact and the action
+            this.artifactSystem.handleArtifactAction(artifactDetected, action);
         } else {
             console.log("No artifact in proximity for interaction.");
         }
