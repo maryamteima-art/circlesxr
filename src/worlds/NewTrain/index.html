@@ -9,6 +9,9 @@
   <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
   <!--Gesture Controls Addon (for tapping on mobile)-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <!--EXTRAS addon for manipulating gltf alphas to indicate selection-->
+  <script src="https://unpkg.com/aframe-extras/dist/aframe-extras.min.js"></script>
+
   <!-- my scripts -->
   <script type="module" src="/worlds/NewTrain/scripts/game.js"></script>
   
@@ -35,22 +38,6 @@
     <!--GAME MANAGER-->
     <a-entity game-manager></a-entity>
     
-    
-    <!-- artefact to play with -->
-    <a-entity id="artefact-gem"
-                position="-3 1 -3" rotation="0 0 0" scale="1 1 1"
-                geometry="primitive:octahedron; radius:0.5;"
-                material="color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;" 
-                circles-artefact="inspectPosition:0 0 0; inspectRotation:0 0 0; inspectScale:0.8 0.8 0.8;
-                                  textRotationY:90.0; labelLookAt:true; descriptionLookAt:true; label_offset:0.0 1.0 0.0; arrow_position:down;
-                                  title:[~20-25 chars] Title Front;
-                                  description:[~240-280 chars]  This is the FRONT text that will display when an object is picked up. Adjust scale size and text rotation properties to make more visible.;
-                                  title_back:[~20-25 chars] Title Back;
-                                  description_back:[~240-280 chars] This is the back/secondary text that will display when you rotate the description bubble.;
-                                  label_text:Gem;"
-                circles-pickup-networked>
-      </a-entity>
-
     <!-- ground & sky -->
     <a-entity id="ground" rotation="-90 0 0" geometry="primitive:circle; radius:10.0;" material="color:rgb(190,140,210);" shadow="cast:false; receive:true;"></a-entity>
     <a-entity id="sky" geometry="primitive:sphere; radius:100.0;"  material="src:#skyMap; shader:flat; flatShading:true; side:back;"></a-entity>

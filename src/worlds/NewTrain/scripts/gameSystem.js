@@ -3,7 +3,7 @@
 
 import { ArtifactSystem } from './artifactSystem.js';
 import { ControllerSystem } from './controllerSystem.js';
-import { MultiplayerModule } from './multiplayerModule.js';
+import { MultiplayerSystem } from './multiplayerSystem.js';
 
 //const eventEmitter = new EventEmitter();
 
@@ -11,9 +11,12 @@ import { MultiplayerModule } from './multiplayerModule.js';
 export class GameSystem {
     constructor() {
         //Initialize Systems
-        this.artifactSystem = new ArtifactSystem();
+        //Pass GameSystem instance to ArtifactSystem (for back reference)
+        this.artifactSystem = new ArtifactSystem(this);
         // Pass GameSystem instance (for back-reference)
         this.controllerSystem = new ControllerSystem(this);
+        //Items player has collected 
+        this.playerInventory = []; 
         console.log("GameSystem initialized");
     }
     //Initial game setup
@@ -54,6 +57,10 @@ export class GameSystem {
         const playerEntity = CIRCLES.getMainCameraElement();
         //return position vector
         return playerEntity.object3D.getWorldPosition(new THREE.Vector3());
+    }
+    addToInventory(artifact) {
+        this.playerInventory.push(artifact);
+        // Additional logic as needed, e.g., updating UI
     }
 
     update(deltaTime) {

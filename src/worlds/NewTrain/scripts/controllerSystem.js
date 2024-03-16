@@ -1,11 +1,10 @@
-//Detects device being used (clicks, taps, swipes, key event listeners, gaze, etc) and converts it to "INCREMENT", "DECREMENT", "GRAB" AND "SELECT" custom keyword actions
+//Detects device being used (clicks, taps, swipes, key event listeners, gaze, etc) and converts it to "INCREMENT", "DECREMENT", AND "SELECT" custom keyword actions
 
 export class ControllerSystem {
     InputActions = {
         SELECT: "select",
         INCREMENT: "increment",
-        DECREMENT: "decrement",
-        GRAB: "grab",
+        DECREMENT: "decrement"
     };
 
     constructor(gameSystem) {

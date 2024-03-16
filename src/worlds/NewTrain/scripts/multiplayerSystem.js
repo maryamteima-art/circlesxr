@@ -1,7 +1,7 @@
-//Handles lobby count, player locations and inputs from different devices
+//Handles lobby count, player locations and emits from different devices
 
 //************EDIT LATER***************
-export class MultiplayerModule {
+export class MultiplayerSystem {
     constructor() {
         // Initialization for multiplayer aspects
         this.players = {};
