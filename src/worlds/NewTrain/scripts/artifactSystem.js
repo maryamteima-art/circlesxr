@@ -52,8 +52,21 @@ export class ArtifactSystem {
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             ////Use null if not using a GLTF model
-            modelUrl: null //'./path/to/suitcaseModel.gltf',
-            //Flag it triggers 
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //passcode, will be compared with user inputs, if match then the suitcase unlocks
+            passcode: [1, 2, 3] 
+          },
+          {
+            type: 'suitcase',
+            digitCount: 2,
+            position: '3 1 -3',
+            htmlElementId: 'suitcase-1',
+            geometry: 'primitive:cube;',
+            material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            ////Use null if not using a GLTF model
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //passcode, will be compared with user inputs, if match then the suitcase unlocks
+            passcode: [4,5] 
           },
           {
             type: 'clock',
@@ -150,7 +163,8 @@ export class ArtifactSystem {
             data.htmlElementId,
             //Passing the model URL directly 
             //Use null (or delete) if using placeholder geometry
-            data.modelUrl 
+            data.modelUrl, 
+            data.passcode
         );
     
         //Add the suitcase to the artifacts array
@@ -198,7 +212,7 @@ export class ArtifactSystem {
         grabbableEntity.setAttribute('grabbable', '');
         document.querySelector('a-scene').appendChild(grabbableEntity);
         
-        //Parse the position string to ensure it's in the correct format for Three.js (proximity checker)
+        //Parse the position string to ensure it's in the correct format for Three.js
         const positionParts = data.position.split(' ').map(parseFloat);
         let grabbableInstance = new Grabbable(
             {x: positionParts[0], y: positionParts[1], z: positionParts[2]}, 
@@ -206,7 +220,6 @@ export class ArtifactSystem {
             this.gameSystem, 
             uniqueId
         );
-        //Push to artifacts array to handle custom interaction
         this.artifacts.push(grabbableInstance);
     }
 
@@ -258,6 +271,9 @@ class Artifact {
     constructor(){
         // Initialize the selected state to false
         this.selected = false;
+        //All artifacts are initially locked
+        //Unlocking happens within subclasses
+        this.locked = false;
     }
 
     //Implement the select method (overridden/extended by subclasses)
@@ -301,41 +317,21 @@ class Grabbable extends Artifact {
         this.flagTrigger = flagTrigger;
         this.gameSystem = gameSystem;
         this.createGrabIndicator();
-        //Store the IDs for deletion of objects
+        //Store the entity ID for deletion of object
         this.entityId = entityId; 
-        this.buttonId = `${entityId}-button`;
-        this.textId = `${entityId}-text`;
     }
 
     select() {
         console.log(`${this.flagTrigger} triggered`);
         this.gameSystem.addToInventory(this);
         
-        //Find and remove the button, text, and entity from the scene
+        // Use the stored ID to find and remove the element from the scene
         const element = document.getElementById(this.entityId);
-        const button = document.getElementById(this.buttonId);
-        const text = document.getElementById(this.textId);
-
-        if (button && button.parentNode) {
-            button.parentNode.removeChild(button);
-        }
-
-        if (text && text.parentNode) {
-            text.parentNode.removeChild(text);
-        }
-
         if (element && element.parentNode) {
             element.parentNode.removeChild(element);
         }
     }
-    increment(){
-        super.increment();
-    }
-    decrement(){
-        super.decrement();
-    }
     //Creates a pulsing sphere around grabbable objects
-    //Creates button and text for pickup as well
     createGrabIndicator(grabbableEntity) {
         let pulseEntity = document.createElement('a-entity');
         //Have sphere slighlty larger than object
@@ -345,32 +341,6 @@ class Grabbable extends Artifact {
         //Pulsing Animation
         pulseEntity.setAttribute('animation', 'property: scale; to: 1.2 1.2 1.2; dur: 1000; direction: alternate; loop: true; easing: easeInOutSine');
         grabbableEntity.appendChild(pulseEntity);
-
-        //Pickup Button
-        const pickButton = document.createElement('a-entity');
-        pickButton.setAttribute('circles-button', `type: cylinder;  button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
-        //Shortening buttons (they were too tall by default)
-        pickButton.setAttribute('scale', "1.3 0.1 1.3");
-        pickButton.setAttribute('rotation', `90 0 0`);
-        pickButton.setAttribute('position', `0 0.15 0.3`); 
-        //IF CLICK
-        pickButton.addEventListener('click', () => {
-            //performs select method/function of the grabbable
-            this.select();
-        });
-        pickButton.setAttribute('id', this.buttonId);
-
-        //Text for the button
-        const text = document.createElement('a-text');
-        text.setAttribute('value', 'Pickup');
-        text.setAttribute('align', 'center');
-        text.setAttribute('position', '0 0.55 0'); // Adjust position to be above the button
-        text.setAttribute('color', '#FFFFFF');
-        text.setAttribute('id', this.textId);
-
-        // Append the button and text to the grabbableEntity
-        grabbableEntity.appendChild(pickButton);
-        grabbableEntity.appendChild(text);
     }
 
     handleAction(action) {
@@ -393,7 +363,7 @@ class Grabbable extends Artifact {
 //Can manipulate digits within the suitcase 
 //Contains only increment and decrement interactions
 class Suitcase extends Artifact{
-    constructor(digitCount, position, htmlElementId) {
+    constructor(digitCount, position, htmlElementId, modelUrl, passcode) {
         super();
         //how many locks in suitcase
         this.digitCount = digitCount;
@@ -405,6 +375,10 @@ class Suitcase extends Artifact{
         //Added for selecting lock digits via keys (as opposed to clicking circlesXR buttons for users who prefer keys)
         this.selectedDigitIndex = 0; 
         this.digitTextEntities = [];
+        //gltf ModelURL
+        this.modelUrl = modelUrl;
+        //Password sequence to unlock the suitcase
+        this.passcode = passcode;
     }
 
     handleAction(action) {
@@ -609,6 +583,8 @@ class Suitcase extends Artifact{
             this.increment(digitIndex);
             //Update the displayed digit-text within array (to map to digit-text UI)
             digitText.setAttribute('value', this.digits[digitIndex].toString()); 
+            //Check if input matches the passcode
+            this.checkUnlock();
         });
         suitcaseEntity.appendChild(incButton);
 
@@ -624,10 +600,41 @@ class Suitcase extends Artifact{
         decButton.addEventListener('click', () => {
             //do decrement() method of suitcase class
             this.decrement(digitIndex);
-            digitText.setAttribute('value', this.digits[digitIndex].toString()); // Update displayed digit
+            //Update displayed digit
+            digitText.setAttribute('value', this.digits[digitIndex].toString()); 
+            //Check if matches the passcode
+            this.checkUnlock();
         });
         suitcaseEntity.appendChild(decButton);
 
+    }
+
+    //Checks the inputted sequence parameter (for artifact) with the sequence users inputted for digit-locks
+    //If they match they trigger suitcase.unlock flag
+    checkUnlock() {
+
+        //Check if array is valid/exists first
+        if (!Array.isArray(this.passcode)) {
+            console.error('Passcode is not an array:', this.passcode);
+            //exit function early
+            return; 
+        }
+
+        //Iterate over the passcode array, if it matches teh digit-locks sequence then unlock is activated (set to true)
+        const unlocked = this.passcode.every((digit, index) => digit === this.digits[index]);
+        //update the locked state in the class 
+        //Initially locked is true, so when unlocked becomes true, locked flips to false (since object is now unlocked)
+        this.locked = !unlocked;
+        if (unlocked) {
+            console.log("Suitcase unlocked!");
+            // Trigger "suitcase passcode unlocked" event or action here
+            //Add items to inventory (specific to each id.)
+            //Can have ids map to specific collectable objects, or can have them passed as parameters as "collectables" or "rewards array"
+            //Adds elements from "rewards" array to inventory
+            //Need a method to "object-ify" rewards to actual game objects (Can just have their UIS show up in Camera, and have them in inventory as flags)
+        } else {
+            console.log("Suitcase remains locked.");
+        }
     }
 
 }

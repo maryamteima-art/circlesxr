@@ -62,6 +62,19 @@ export class GameSystem {
         this.playerInventory.push(artifact);
         // Additional logic as needed, e.g., updating UI
     }
+    //Checks if artifact is interactable with 
+    //Sewing Machine is initially locked until Needle+Thread and fabric is collected (fabric collected from floor, and Needle+Thread only collected when suitcase is unlocked), and player is in proximity
+    //Clock is initially locked until handles have been collected (only happens if suitcase is unlocked)
+    //Suitcase gives two items to inventory (Needle+Thread and Handles)
+    canInteractWithArtifact(artifactType) {
+        // Assuming a method that checks the inventory for a specific item
+        // For clocks, ensure the specific grabbable item is in the inventory
+        if (artifactType === 'clock') {
+            return this.playerInventory.includes('handles');
+        }
+        // Default to true for other artifacts or specify other conditions as needed
+        return true;
+    }
 
     update(deltaTime) {
         // Main game loop update method
