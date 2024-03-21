@@ -119,20 +119,22 @@ export class ArtifactSystem {
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [1, 2, 3] ,
             //Rewards/items collected when unlocking the suitcase
-            rewards:["handles"]
+            rewards:["handles"],
+            newModelUrl: null
           },
           {
             type: 'suitcase',
             digitCount: 2,
             position: '3 1 -3',
-            htmlElementId: 'suitcase-1',
+            htmlElementId: 'suitcase-2',
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             ////Use null if not using a GLTF model
             modelUrl: null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [4,5],
-            rewards:["necklace"] 
+            rewards:["necklace"],
+            newModelUrl: null 
           },
           {
             type: 'clock',
@@ -147,7 +149,8 @@ export class ArtifactSystem {
             unlockText: 'Interaction Available!',
             itemsToUnlock: ["handles"],
             faceModelUrl: null, 
-            handlesModelUrl: null 
+            handlesModelUrl: null,
+            newFaceModelUrl:null 
           },
           //Make sure ID is unique (not the same as obstacle or other grabbables)
           {
@@ -283,6 +286,7 @@ export class ArtifactSystem {
             data.modelUrl, 
             data.passcode,
             data.rewards,
+            data.newModelUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this 
         );
@@ -307,6 +311,7 @@ export class ArtifactSystem {
             data.itemsToUnlock,
             data.faceModelUrl,
             data.handlesModelUrl,
+            data.newFaceModelUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this
         );
@@ -711,7 +716,7 @@ class Obstacle extends Artifact{
 //Can manipulate digits within the suitcase 
 //Contains only increment and decrement interactions
 class Suitcase extends Artifact{
-    constructor(digitCount, position, htmlElementId, modelUrl, passcode, rewards, artifactSystem) {
+    constructor(digitCount, position, htmlElementId, modelUrl, passcode, rewards, newModelUrl, artifactSystem) {
         super();
         //how many locks in suitcase
         this.digitCount = digitCount;
@@ -733,6 +738,7 @@ class Suitcase extends Artifact{
         this.artifactSystem = artifactSystem;
         //Ensuring methods that use `this.artifactSystem` are bound correctly
         this.checkUnlock = this.checkUnlock.bind(this);
+        this.newModelUrl = newModelUrl;
     }
 
     handleAction(action) {
@@ -871,6 +877,8 @@ class Suitcase extends Artifact{
         //Assuming this.position is an object {x, y, z}
         //CHANGE WHEN FIGURING OUT LOADING OF ARTIFACT OBJECTS
         const suitcaseEntity = document.createElement('a-entity');
+        //map its id
+        suitcaseEntity.setAttribute('id', this.htmlElementId);
         //Sets the width based on how many locks there are (3 locks = medium width, 6 locks = large width, etc)
         suitcaseEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 0.5; width: ${this.digitCount * 0.5}`);
         //Muted brown
@@ -994,6 +1002,12 @@ class Suitcase extends Artifact{
                 this.artifactSystem.addToInventory(reward);
                 console.log("Reward Obtained: ", this.rewards);
             });
+            // Remove the original entity
+            const entity = document.getElementById(this.htmlElementId);
+            entity.parentNode.removeChild(entity);
+               
+            //Generate a new entity to show it's unlocked
+            this.generateUnlockedEntity();
 
         } else {
             console.log("Suitcase remains locked.");
@@ -1003,6 +1017,21 @@ class Suitcase extends Artifact{
     canInteract() {
         return true; 
     }
+    
+    //Replaces locked suitcase with the new one
+    generateUnlockedEntity() {
+        const unlockedEntity = document.createElement('a-entity');
+        // Use GLTF model if available, otherwise use placeholder geometry
+        if (this.newModelUrl) {
+            unlockedEntity.setAttribute('gltf-model', this.newModelUrl);
+        } else {
+            unlockedEntity.setAttribute('geometry', 'primitive: box; depth: 0.5; height: 0.5; width: 1');
+            unlockedEntity.setAttribute('material', 'color: green'); // Indicate unlocked
+        }
+        unlockedEntity.setAttribute('position', this.position);
+        const scene = document.querySelector('a-scene');
+        scene.appendChild(unlockedEntity);
+    }
 
 }
 
@@ -1010,7 +1039,7 @@ class Suitcase extends Artifact{
 //Can manipulate digits within the clock (hour and minute) 
 //Contains only increment (clockwise) and decrement (counter clockwise) interactions
 class Clock extends Artifact{
-    constructor(position, htmlElementId, passcode, rewards, lockText, unlockText, itemsToUnlock, faceModelUrl,handlesModelUrl, artifactSystem) {
+    constructor(position, htmlElementId, passcode, rewards, lockText, unlockText, itemsToUnlock, faceModelUrl,handlesModelUrl, newFaceModelUrl, artifactSystem) {
         super();
         this.position = position;
         this.htmlElementId = htmlElementId;
@@ -1042,6 +1071,8 @@ class Clock extends Artifact{
         this.artifactSystem = artifactSystem;
         //Ensure methods that use `this.artifactSystem` are bound correctly
         this.checkUnlock = this.checkUnlock.bind(this);
+        //new gltf model when unlocked
+        this.newFaceModelUrl = newFaceModelUrl;
       }
 
     handleAction(action) {
@@ -1283,6 +1314,12 @@ class Clock extends Artifact{
                 this.artifactSystem.addToInventory(reward);
                 console.log("Reward Obtained: ", this.rewards);
             });
+            
+            //Remove the original entity
+            const entity = document.getElementById(this.htmlElementId);
+            entity.parentNode.removeChild(entity);
+            // Generate a new simpler entity to show it's unlocked
+            this.generateUnlockedClockEntity();
 
         } else {
             console.log("Clock remains locked.");
@@ -1296,6 +1333,23 @@ class Clock extends Artifact{
     //returns true if it finds a match
     canInteract() {
         return this.itemsToUnlock.every(item => this.artifactSystem.playerInventory[item]);
+    }
+    
+    //Create a new clock model when unlocked
+    generateUnlockedClockEntity() {
+        const clockEntity = document.createElement('a-entity');
+        //Use GLTF model for the face if available, otherwise create a simple sphere as a placeholder
+        if (this.newFaceModelUrl) {
+            clockEntity.setAttribute('gltf-model', this.newFaceModelUrl);
+        } else {
+            //Simple sphere to represent the clock face
+            clockEntity.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
+            clockEntity.setAttribute('material', 'color: #CCC');
+        }
+        //UNDHIDE DEBUG
+        clockEntity.setAttribute('position', this.position);
+        const scene = document.querySelector('a-scene');
+        scene.appendChild(clockEntity);
     }
 
 
