@@ -5,7 +5,6 @@ import { ArtifactSystem } from './artifactSystem.js';
 import { ControllerSystem } from './controllerSystem.js';
 import { MultiplayerSystem } from './multiplayerSystem.js';
 
-//const eventEmitter = new EventEmitter();
 
 
 export class GameSystem {
@@ -15,8 +14,6 @@ export class GameSystem {
         this.artifactSystem = new ArtifactSystem(this);
         // Pass GameSystem instance (for back-reference)
         this.controllerSystem = new ControllerSystem(this);
-        //Items player has collected 
-        this.playerInventory = []; 
         console.log("GameSystem initialized");
     }
     //Initial game setup
@@ -40,9 +37,8 @@ export class GameSystem {
         const artifactDetected = this.artifactSystem.findArtifactInProximity(playerPos);
         
         // Check if an artifact was found
-        if (artifactDetected) {
+        if (artifactDetected){ //&& artifactDetected.canInteract()) {
             console.log("Artifact in proximity for interaction:", artifactDetected);
-            
             // Call handleArtifactAction with the found artifact and the action
             this.artifactSystem.handleArtifactAction(artifactDetected, action);
         } else {
@@ -50,6 +46,7 @@ export class GameSystem {
         }
 
     }
+    
     //Game's player tracking via camera location (object.getWorldPosition)
     playerPosition() {
         //obtain camera (which is player)
@@ -58,10 +55,7 @@ export class GameSystem {
         //return position vector
         return playerEntity.object3D.getWorldPosition(new THREE.Vector3());
     }
-    addToInventory(artifact) {
-        this.playerInventory.push(artifact);
-        // Additional logic as needed, e.g., updating UI
-    }
+
     //Checks if artifact is interactable with 
     //Sewing Machine is initially locked until Needle+Thread and fabric is collected (fabric collected from floor, and Needle+Thread only collected when suitcase is unlocked), and player is in proximity
     //Clock is initially locked until handles have been collected (only happens if suitcase is unlocked)

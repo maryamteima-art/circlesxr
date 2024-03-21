@@ -7,7 +7,14 @@ export class ArtifactSystem {
         this.artifacts = []; 
         //Store the reference to gameSystem for back-communication 
         this.gameSystem = gameSystem; 
-        
+        console.log("ArtifactSystem initialized with gameSystem:", this.gameSystem);
+        //Player's inventory
+        //contains collectables player obtains from unlocking suitcases and clocks. Contains grabbables player has collected as well
+        //Inventory is an object (since we'll be adding key-value pairs of rewards, and standalone objects) --> easier to manage than an array (since arrays have specific ordering)
+        this.playerInventory = {};
+        //Initially false, indicating the clock is locked
+        this.clockUnlock = false; 
+
     }
 
     //VARIABLES
@@ -27,9 +34,9 @@ export class ArtifactSystem {
           //modelUrl: './path/model.gltf',
           geometry: 'primitive:octahedron; radius:0.5;',
           material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
-          title: 'Gem Title',
-          description: 'This is the description text for the front.',
-          label_text: 'Gem'
+          title: '1940s Filtering Process',
+          description: 'In the 1940s, milk filtration was primarily a mechanical process, using cloth filters to remove impurities. Pasteurization, heating milk to at least 145°F (62.8°C) for 30 minutes or 161°F (71.7°C) for 15 seconds, was a common method to kill harmful bacteria.',
+          label_text: '1940s Milk'
         },
         {
             type: 'view-only',
@@ -40,9 +47,65 @@ export class ArtifactSystem {
             modelUrl: null, //'./path/model.gltf',
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
-            title: 'Gem Other Title',
-            description: 'This is the description text for the front.',
-            label_text: 'Gem 2'
+            title: 'Air Transport 1930s',
+            description: 'Douglas DC-3, introduced in the 1930s, revolutionized air transport with its efficiency and reliability, making commercial air travel more accessible. Other civilian aircraft of the era include the Ford Trimotor and the Boeing 247, which contributed to the development of commercial aviation',
+            label_text: 'Air Transport 1930s'
+          },
+          ,
+        {
+            type: 'view-only',
+            position: '5 1 2',
+            rotation: '0 45 0',
+            scale: '1 1 1',
+            //Remove geometry and material when importing gltf and unhide the URL below
+            modelUrl: null, //'./path/model.gltf',
+            geometry: 'primitive:octahedron; radius:0.5;',
+            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            title: 'Quartz Clock in 1927',
+            description: 'The development of the first quartz clock was in 1927 by the Candian Engineers Warren Marrison and J.W. Horton at Bell Telephone Laboratories. A pivotal moment in timekeeping, as quartz clocks were far more accurate than mechanical clocks',
+            label_text: 'Quartz Clock'
+          },
+          ,
+        {
+            type: 'view-only',
+            position: '6 1 3',
+            rotation: '0 45 0',
+            scale: '1 1 1',
+            //Remove geometry and material when importing gltf and unhide the URL below
+            modelUrl: null, //'./path/model.gltf',
+            geometry: 'primitive:octahedron; radius:0.5;',
+            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            title: '1920s Rayon Fabric',
+            description: 'In 1894, British inventors, Charles Cross, Edward Bevan, and Clayton Beadle, patented the first, safe production of artificial silk, named Viscose Rayon, composed of chemically processed cellulose. "Avtex Fibers Incorporated" first commercially produced Rayon in 1910 in the United States.',
+            label_text: 'Rayon Fabric'
+          },
+          ,
+        {
+            type: 'view-only',
+            position: '4 1 4',
+            rotation: '0 45 0',
+            scale: '1 1 1',
+            //Remove geometry and material when importing gltf and unhide the URL below
+            modelUrl: null, //'./path/model.gltf',
+            geometry: 'primitive:octahedron; radius:0.5;',
+            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            title: 'The Mallard 4468',
+            description: 'On 3 July 1938, Mallard broke the world speed record for steam locomotives at 126 mph (203 km/h), which still stands today. This A4 class locomotive was designed by the British railway Engineer Sir Nigel Gresley.',
+            label_text: 'The Mallard Train'
+          },
+          ,
+        {
+            type: 'view-only',
+            position: '2 1 -10',
+            rotation: '0 45 0',
+            scale: '1 1 1',
+            //Remove geometry and material when importing gltf and unhide the URL below
+            modelUrl: null, //'./path/model.gltf',
+            geometry: 'primitive:octahedron; radius:0.5;',
+            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            title: 'First Espresso Machine',
+            description: 'The invention of the espresso machine was by the Italian inventor Angelo Moriondo in 1884. Further improvements by Luigi Bezerra, Desiderio Pavoni and Achille Gaggia in 1904-1940s introduced the high-pressure extraction that defines espresso today',
+            label_text: 'Espresso Machine'
           },
           {
             type: 'suitcase',
@@ -54,7 +117,9 @@ export class ArtifactSystem {
             ////Use null if not using a GLTF model
             modelUrl: null, //'./path/to/suitcaseModel.gltf',
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
-            passcode: [1, 2, 3] 
+            passcode: [1, 2, 3] ,
+            //Rewards/items collected when unlocking the suitcase
+            rewards:["handles"]
           },
           {
             type: 'suitcase',
@@ -64,26 +129,74 @@ export class ArtifactSystem {
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            modelUrl: null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
-            passcode: [4,5] 
+            passcode: [4,5],
+            rewards:["necklace"] 
           },
           {
             type: 'clock',
             position: '0 1.5 -3', 
             htmlElementId: 'clock-1',
             //Flag it triggers
+            //Passcode
+            passcode:[270,180],
+            //Reward/item obtained when you unlock clock
+            rewards:["thread"],
+            lockText: 'Locked! Missing Component!',
+            unlockText: 'Interaction Available!',
+            itemsToUnlock: ["handles"],
+            faceModelUrl: null, 
+            handlesModelUrl: null 
           },
+          //Make sure ID is unique (not the same as obstacle or other grabbables)
           {
             type: 'grabbable',
-            position: '-8 1 -4', 
-            modelUrl: null,//'./path/to/gltf/model.gltf', 
-            //Default material & geometry if no model URL is provided
-            geometry: 'primitive: sphere; radius: 1;', 
-            material: 'color: red;',
-            //Identifier or action to trigger upon grabbing
-            flagTrigger: 'exampleFlag', 
-        }
+            position: '-8 1 4',
+            htmlElementId: '1',
+            ////Use null if not using a GLTF model
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //Rewards/items collected when unlocking the suitcase
+            rewards:["coupon"]
+          },
+          //Make sure ID is unique (not the same as obstacle or other grabbables)
+          {
+            type: 'grabbable',
+            position: '8 1 4',
+            htmlElementId: '2',
+            ////Use null if not using a GLTF model
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //Rewards/items collected when unlocking the suitcase
+            rewards:["fabric"]
+          },
+          //Sewing Machine
+          //Make sure ID is unique (not the same as other obstacles or grabbables)
+        {
+            type: 'obstacle',
+            position: '0 1 -4',
+            htmlElementId: '3',
+            ////Use null if not using a GLTF model
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //Rewards/items collected when unlocking the suitcase
+            itemsToUnlock:["fabric", "thread"], 
+            reward:["code"], 
+            lockText:"Locked! Missing Sewing Materials", 
+            unlockText:"Sewing....New Fabric Created"
+        },
+        //Door
+        //Make sure ID is unique (not the same as other obstacles or grabbables)
+        {
+            type: 'obstacle',
+            position: '0 1 1',
+            htmlElementId: '4',
+            ////Use null if not using a GLTF model
+            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //Rewards/items collected when unlocking the suitcase
+            itemsToUnlock:["coupon"], 
+            reward:["checkpoint"], 
+            lockText:"Locked! Need Card Access", 
+            unlockText:"Access Granted! Checkpoint Created"
+          },
       ];
 
     //METHODS
@@ -111,8 +224,12 @@ export class ArtifactSystem {
                     case 'grabbable':
                         this.loadGrabbableArtifact(data);
                         break;
+                    case 'obstacle':
+                        this.loadObstacleArtifact(data);
+                        break;
                 }
             });
+            console.log("All artifacts loaded:", this.artifacts);
         } catch (error) {
             console.error("Error loading artifacts:", error);
         }    
@@ -164,7 +281,10 @@ export class ArtifactSystem {
             //Passing the model URL directly 
             //Use null (or delete) if using placeholder geometry
             data.modelUrl, 
-            data.passcode
+            data.passcode,
+            data.rewards,
+            //Passing an artifactSystem instance to access it's inventory methods
+            this 
         );
     
         //Add the suitcase to the artifacts array
@@ -179,7 +299,16 @@ export class ArtifactSystem {
     loadClockArtifact(data) {
         const clock = new Clock(
             data.position, // Make sure this matches your Clock class constructor
-            data.htmlElementId
+            data.htmlElementId,
+            data.passcode,
+            data.rewards,
+            data.lockText,
+            data.unlockText,
+            data.itemsToUnlock,
+            data.faceModelUrl,
+            data.handlesModelUrl,
+            //Passing an artifactSystem instance to access it's inventory methods
+            this
         );
     
         //Push to the artifacts array to manage interactions
@@ -192,35 +321,48 @@ export class ArtifactSystem {
     
     //Grabbables are Custom interactable objects and affect gameSystem (proximity checker and states), hence why they get pushed to artifactsArray
     loadGrabbableArtifact(data) {
-        let grabbableEntity = document.createElement('a-entity');
-        
-        //Unique Id for deletion in scene
-        const uniqueId = `grabbable-${Math.floor(Math.random() * 100000)}`;
-        grabbableEntity.setAttribute('id', uniqueId);
-        grabbableEntity.setAttribute('position', data.position);
-        
-        //if gltf model provided, import
-        if (data.modelUrl) {
-            grabbableEntity.setAttribute('gltf-model', data.modelUrl);
-            //otherwise create a basic geometry and material listed in the artifactsData array
-        } else {
-            grabbableEntity.setAttribute('geometry', data.geometry);
-            grabbableEntity.setAttribute('material', data.material);
-            grabbableEntity.setAttribute('scale', "0.5 0.5 0.5");
-        }
-        
-        grabbableEntity.setAttribute('grabbable', '');
-        document.querySelector('a-scene').appendChild(grabbableEntity);
-        
-        //Parse the position string to ensure it's in the correct format for Three.js
-        const positionParts = data.position.split(' ').map(parseFloat);
-        let grabbableInstance = new Grabbable(
-            {x: positionParts[0], y: positionParts[1], z: positionParts[2]}, 
-            data.flagTrigger, 
-            this.gameSystem, 
-            uniqueId
+        const grababble = new Grabbable(
+            //Parsing the position string into an object since in generateLocks it uses an object as parameters/reference (it was what happened to work, and I don't want to risk any new errors)
+            {x: parseFloat(data.position.split(' ')[0]), y: parseFloat(data.position.split(' ')[1]), z: parseFloat(data.position.split(' ')[2])}, 
+            data.htmlElementId,
+            //Passing the model URL directly 
+            //Use null (or delete) if using placeholder geometry
+            data.modelUrl,
+            data.rewards,
+            //Passing an artifactSystem instance to access it's inventory methods
+            this 
         );
-        this.artifacts.push(grabbableInstance);
+    
+        //Add the grababble to the artifacts array
+        //Artifacts array is what's used to detect objects in proximity and for gameSystem's states
+        this.artifacts.push(grababble); 
+        
+        //Generate the grababble entity and its locks
+        grababble.generateGrabEntities(); 
+    }
+
+    loadObstacleArtifact(data) {
+        const obstacle = new Obstacle(
+            //Parsing the position string into an object since in generateLocks it uses an object as parameters/reference (it was what happened to work, and I don't want to risk any new errors)
+            {x: parseFloat(data.position.split(' ')[0]), y: parseFloat(data.position.split(' ')[1]), z: parseFloat(data.position.split(' ')[2])}, 
+            data.htmlElementId,
+            //Passing the model URL directly 
+            //Use null (or delete) if using placeholder geometry
+            data.modelUrl,
+            data.itemsToUnlock, 
+            data.reward, 
+            data.lockText, 
+            data.unlockText,
+            //Passing an artifactSystem instance to access it's inventory methods
+            this 
+        );
+    
+        //Add the obstacle to the artifacts array
+        //Artifacts array is what's used to detect objects in proximity and for gameSystem's states
+        this.artifacts.push(obstacle); 
+        
+        //Generate the obstacle entity and its locks
+        obstacle.generateObstacleEntities(); 
     }
 
     //Checks proximity of each object to enable and disable object interaction
@@ -236,6 +378,13 @@ export class ArtifactSystem {
             //Compare position property of an artifact with player and radius
             //Since artifacts positions are objects within the array {x,y,z}, need to convert to three.js to be compatible with playerPosition (since it's three.js vector)
             if (playerPosition.distanceTo(new THREE.Vector3(artifact.position.x, artifact.position.y, artifact.position.z)) < interactionRadius) {
+                //If artifact is an obstacle and Inventory items haven't been collected
+                if (artifact instanceof Obstacle && !artifact.canInteract()) {
+                    console.log(`Near ${artifact.name}, but cannot interact. Missing items.`);
+                    //ADD UI MESSAGE
+                    //DISPLAY lockedText of artifact in UI
+                    return null;
+                }
                 console.log('Near artifact: Interact initiated');
                 //Return the first artifact found in proximity
                 return artifact; 
@@ -261,6 +410,37 @@ export class ArtifactSystem {
                 break;
         }
     }
+    
+    //Adds rewards and artifacts to inventory
+    addToInventory(artifact){
+        console.log(`Artifact added to inventory: ${artifact}`);
+        // Add artifact to inventory here
+        this.playerInventory[artifact] = true;
+        // Print the current state of the inventory after adding the new artifact
+        console.log("Current Inventory:", this.playerInventory);
+    }
+
+    //Suitcases, Clocks, and sewing Machine give a reward or collectable when unlocking them
+    //These collected-items are then added to inventory to be used in states and UI
+    //The inventory is represented as an object. Each key in the object represents a reward, and the value (set to true) signifies the possession of that reward.
+    addRewardsToInventory(rewards) {
+        //Iterates through the rewards array of objects
+        //Update the player's inventory by setting each reward's corresponding boolean to true
+        rewards.forEach(reward => {
+            // Update player inventory with the reward
+            //Set the reward as true to signify it's been collected (useful for linear progression)
+            this.playerInventory[reward] = true;
+    
+            // Update UI or perform any other actions needed upon receiving this reward
+            console.log(`Reward collected: ${reward}`);
+        });
+    }
+    //Removes artifact from array when it's collected or not interactable anymore
+    removeFromArtifacts(htmlElementId) {
+        //Filter out the artifact with the matching htmlElementId
+        this.artifacts = this.artifacts.filter(artifact => artifact.htmlElementId !== htmlElementId);
+    }
+    
 }
 
 //ARTIFACT CLASSES 
@@ -310,37 +490,20 @@ class Artifact {
 //Solely Grabbable and Immediately added to inventory 
 //Contains only select() interactions
 //references gameSystem since it requires access to playerInventory to add collected elements to inventory 
-class Grabbable extends Artifact {
-    constructor(position, flagTrigger, gameSystem) {
+class Grabbable extends Artifact{
+    constructor(position, htmlElementId, modelUrl, rewards, artifactSystem) {
         super();
         this.position = position;
-        this.flagTrigger = flagTrigger;
-        this.gameSystem = gameSystem;
-        this.createGrabIndicator();
-        //Store the entity ID for deletion of object
-        this.entityId = entityId; 
-    }
-
-    select() {
-        console.log(`${this.flagTrigger} triggered`);
-        this.gameSystem.addToInventory(this);
-        
-        // Use the stored ID to find and remove the element from the scene
-        const element = document.getElementById(this.entityId);
-        if (element && element.parentNode) {
-            element.parentNode.removeChild(element);
-        }
-    }
-    //Creates a pulsing sphere around grabbable objects
-    createGrabIndicator(grabbableEntity) {
-        let pulseEntity = document.createElement('a-entity');
-        //Have sphere slighlty larger than object
-        pulseEntity.setAttribute('geometry', 'primitive: sphere; radius: 1.1');
-        //Light yellow transparent
-        pulseEntity.setAttribute('material', 'color: #ffff00; opacity: 0.5; transparent: true');
-        //Pulsing Animation
-        pulseEntity.setAttribute('animation', 'property: scale; to: 1.2 1.2 1.2; dur: 1000; direction: alternate; loop: true; easing: easeInOutSine');
-        grabbableEntity.appendChild(pulseEntity);
+        //The HTML ID of the suitcase entity
+        this.htmlElementId = htmlElementId;
+        //gltf ModelURL
+        this.modelUrl = modelUrl;
+        //Reward/item collected when unlocking the suitcase
+        this.rewards = rewards;
+        //Passing an artifactSystem instance to use its inventory method (to store rewards to inventory when unlocking suitcases)
+        this.artifactSystem = artifactSystem;
+        //Reference to the object
+        this.entity = null;
     }
 
     handleAction(action) {
@@ -357,13 +520,198 @@ class Grabbable extends Artifact {
             // Handle other actions
         }
     }
+
+    
+    select() {
+        this.entity.parentNode.removeChild(this.entity);
+        this.entity = null;
+        
+
+        // Add the reward(s) to the inventory
+        if (Array.isArray(this.rewards)) {
+            this.rewards.forEach(reward => {
+                this.artifactSystem.addToInventory(reward);
+            });
+        } else {
+            // If there's only a single reward, add it directly
+            this.artifactSystem.addToInventory(this.rewards);
+        }
+
+        //Remove from the array (to not interact with it since it's been collected)
+        this.artifactSystem.removeFromArtifacts(this.htmlElementId);
+
+    }
+
+    increment() {
+        console.log("Nothing to increment");
+        
+    }
+
+    decrement() {
+        console.log("Nothing to decrement");
+    }
+
+    generateGrabEntities() {
+        console.log("Generating Grabbable entities...");
+
+        //Assuming this.position is an object {x, y, z}
+        const grabEntity = document.createElement('a-entity');
+
+        if (this.modelUrl) {
+            entity.setAttribute('gltf-model', this.modelUrl);
+        }else{
+        grabEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 0.5; width: 4`);
+        grabEntity.setAttribute('material', 'color: red');
+        }
+        
+        //Position
+        grabEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
+        
+        //Adding listener
+        grabEntity.addEventListener('click', () => this.select());
+
+        //Store the entity reference
+        this.entity = grabEntity;
+
+        //Add to A-Frame scene
+        document.querySelector('a-scene').appendChild(grabEntity);
+    }
+
+    //Artifact is Always interactable
+    canInteract() {
+        return true; 
+    }
+
+}
+
+//OBSTACLES
+//Artifacts that block the linear progression until an item is collected. I.E Door (requires "coupon" access in inventory), Sewing Machine (Requires "Fabric" and "Thread")
+class Obstacle extends Artifact{
+    constructor(position, htmlElementId, modelUrl, itemsToUnlock, reward, lockText, unlockText, artifactSystem) {
+        super();
+        this.position = position;
+        //The HTML ID of the suitcase entity
+        this.htmlElementId = htmlElementId;
+        //gltf ModelURL
+        this.modelUrl = modelUrl;
+        this.modelUrl = modelUrl;
+        //Required items to unlock this obstacle
+        this.itemsToUnlock = itemsToUnlock; 
+        //Reward for unlocking
+        this.reward = reward;
+        //Text to show when the obstacle is locked
+        this.lockText = lockText; 
+        //Text to show when the obstacle is unlocked
+        this.unlockText = unlockText; 
+        //Passing an artifactSystem instance to use its inventory method (to store rewards to inventory when unlocking suitcases)
+        this.artifactSystem = artifactSystem;
+        //Reference to the object
+        this.entity = null;
+    }
+
+    handleAction(action) {
+        switch (action) {
+            case InputActions.SELECT:
+                this.select();
+                break;
+            case InputActions.INCREMENT:
+                this.increment();
+                break;
+            case InputActions.DECREMENT:
+                this.decrement();
+                break;
+            // Handle other actions
+        }
+    }
+
+    
+    select() {
+        // Check if all required items are present in the inventory
+        //Filters through the playerInventory and checks if matches from itemsToUnlock array are found (looks for keys)
+        const allItemsPresent = this.itemsToUnlock.every(item => this.artifactSystem.playerInventory[item]);
+
+        if (allItemsPresent) {
+            console.log(this.unlockText);
+
+            //Executing specific actions based on the obstacle type
+            switch (this.htmlElementId) {
+                case 'door':
+                    console.log('Generating circlesXR checkpoint...');
+                    //Generate circlesXR checkpoint 
+                    break;
+                case 'sewing machine':
+                    console.log('Giving digit code to players...');
+                    //Add digit code to inventory
+                    this.artifactSystem.addToInventory(this.reward);
+                    console.log(`${this.reward} added to inventory.`);
+                    break;
+                default:
+                    console.log('Unknown obstacle type.');
+                    break;
+            }
+
+            //Optionally, remove the obstacle from the scene
+            if (this.entity) {
+                this.entity.parentNode.removeChild(this.entity);
+                this.entity = null;
+            }
+
+            //Remove the obstacle from the artifacts array (to disable interactions)
+            this.artifactSystem.removeFromArtifacts(this.htmlElementId);
+        } else {
+            // Required items not present, show lock text
+            console.log(this.lockText);
+        }
+
+    }
+
+    increment() {
+        console.log("Nothing to increment");
+        
+    }
+
+    decrement() {
+        console.log("Nothing to decrement");
+    }
+
+    generateObstacleEntities() {
+        console.log("Generating Obstacle entities...");
+
+        //Assuming this.position is an object {x, y, z}
+        const obEntity = document.createElement('a-entity');
+
+        if (this.modelUrl) {
+            entity.setAttribute('gltf-model', this.modelUrl);
+        }else{
+            obEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 3; width: 2`);
+            obEntity.setAttribute('material', 'color: blue');
+        }
+        
+        //Position
+        obEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
+        
+        //Adding listener
+        obEntity.addEventListener('click', () => this.select());
+
+        //Store the entity reference
+        this.entity = obEntity;
+
+        //Add to A-Frame scene
+        document.querySelector('a-scene').appendChild(obEntity);
+    }
+
+    //Artifact is Always interactable
+    canInteract() {
+        return true; 
+    }
+
 }
 
 //SUITCASE
 //Can manipulate digits within the suitcase 
 //Contains only increment and decrement interactions
 class Suitcase extends Artifact{
-    constructor(digitCount, position, htmlElementId, modelUrl, passcode) {
+    constructor(digitCount, position, htmlElementId, modelUrl, passcode, rewards, artifactSystem) {
         super();
         //how many locks in suitcase
         this.digitCount = digitCount;
@@ -379,6 +727,12 @@ class Suitcase extends Artifact{
         this.modelUrl = modelUrl;
         //Password sequence to unlock the suitcase
         this.passcode = passcode;
+        //Reward/item collected when unlocking the suitcase
+        this.rewards = rewards;
+        //Passing an artifactSystem instance to use its inventory method (to store rewards to inventory when unlocking suitcases)
+        this.artifactSystem = artifactSystem;
+        //Ensuring methods that use `this.artifactSystem` are bound correctly
+        this.checkUnlock = this.checkUnlock.bind(this);
     }
 
     handleAction(action) {
@@ -619,22 +973,35 @@ class Suitcase extends Artifact{
             //exit function early
             return; 
         }
+        
+        //Check if rewards is valid/exists
+        if(!Array.isArray(this.rewards)){
+            console.log("Rewards Array is not Valid", this.rewards)
+            //exit function early
+            return;
+        }
 
-        //Iterate over the passcode array, if it matches teh digit-locks sequence then unlock is activated (set to true)
+        //Iterate over the passcode array, if it matches the digit-locks sequence then unlock is activated (set to true)
         const unlocked = this.passcode.every((digit, index) => digit === this.digits[index]);
         //update the locked state in the class 
         //Initially locked is true, so when unlocked becomes true, locked flips to false (since object is now unlocked)
         this.locked = !unlocked;
         if (unlocked) {
             console.log("Suitcase unlocked!");
-            // Trigger "suitcase passcode unlocked" event or action here
-            //Add items to inventory (specific to each id.)
-            //Can have ids map to specific collectable objects, or can have them passed as parameters as "collectables" or "rewards array"
-            //Adds elements from "rewards" array to inventory
-            //Need a method to "object-ify" rewards to actual game objects (Can just have their UIS show up in Camera, and have them in inventory as flags)
+            
+            //Loop over the rewards array, and add the string into the inventory
+            this.rewards.forEach(reward => {
+                this.artifactSystem.addToInventory(reward);
+                console.log("Reward Obtained: ", this.rewards);
+            });
+
         } else {
             console.log("Suitcase remains locked.");
         }
+    }
+    //Artifact is Always interactable
+    canInteract() {
+        return true; 
     }
 
 }
@@ -643,7 +1010,7 @@ class Suitcase extends Artifact{
 //Can manipulate digits within the clock (hour and minute) 
 //Contains only increment (clockwise) and decrement (counter clockwise) interactions
 class Clock extends Artifact{
-    constructor(position, htmlElementId) {
+    constructor(position, htmlElementId, passcode, rewards, lockText, unlockText, itemsToUnlock, faceModelUrl,handlesModelUrl, artifactSystem) {
         super();
         this.position = position;
         this.htmlElementId = htmlElementId;
@@ -659,6 +1026,22 @@ class Clock extends Artifact{
         this.currentTypeIndex = 0; 
         //Adding a flag to prevent rapid selection
         this.canSelect = true;
+        //gltf models if available
+        this.faceModelUrl = faceModelUrl;
+        this.handlesModelUrl = handlesModelUrl;
+        //Passcode sequence to unlock clock
+        this.passcode = passcode;
+        //Reward/Item collected when unlocking clocks
+        this.rewards = rewards;
+        //Texts to display in UI for lock and Unlock states
+        this.lockText = lockText;
+        this.unlockText = unlockText;
+        //Items required to collect to enable interaction
+        this.itemsToUnlock = itemsToUnlock;
+        //Passing an artifactSystem instance to use its inventory method (to store rewards to inventory when unlocking clocks)
+        this.artifactSystem = artifactSystem;
+        //Ensure methods that use `this.artifactSystem` are bound correctly
+        this.checkUnlock = this.checkUnlock.bind(this);
       }
 
     handleAction(action) {
@@ -686,52 +1069,55 @@ class Clock extends Artifact{
         this.selectButtonText.setAttribute('value', this.selectedHand.toUpperCase());
         //Update visuals (IF THIS DOESN'T WORK, ANOTHER SHORTCUT IS TO SWAP MODELS WITH ONE THAT HAS LIGHTER OR DIFFERENT COLOR)*/
         // Toggle the current type index
-        if (this.canSelect) {
-            this.currentTypeIndex = (this.currentTypeIndex + 1) % this.types.length;
-            this.selectedHand = this.types[this.currentTypeIndex];
-            this.selectButtonText.setAttribute('value', this.selectedHand.toUpperCase());
-            console.log(`Selected hand: ${this.selectedHand}`);
+       
+            //DISPLAY UI
+            console.log(`${this.unlockText}`);
+        
+            if (this.canSelect) {
+                this.currentTypeIndex = (this.currentTypeIndex + 1) % this.types.length;
+                this.selectedHand = this.types[this.currentTypeIndex];
+                this.selectButtonText.setAttribute('value', this.selectedHand.toUpperCase());
+                console.log(`Selected hand: ${this.selectedHand}`);
 
-            // Temporarily disable further selection
-            this.canSelect = false;
+                // Temporarily disable further selection
+                this.canSelect = false;
 
-            //Re-enable selection after a 10ms delay
-            //Prevents the error of rapid switching between the elements in the array
-            setTimeout(() => {
-                this.canSelect = true;
-            }, 10); 
-
-            //Update visuals here
+                //Re-enable selection after a 10ms delay
+                //Prevents the error of rapid switching between the elements in the array
+                setTimeout(() => {
+                    this.canSelect = true;
+                }, 10); 
         }
+
     }
 
     //Rotates Handles 
     //Hours is by 30 degrees (since 360/12 = 30)
     //Minute is by 30 degrees for 5 minutes (360/60 = 6degrees per minute. 5min*6 = 30degrees for 5 minutes)
     increment() {
-        if (this.selectedHand === 'hour') {
-            //30 degrees for each hour
-            //Modulo is for wrapping
-          this.hourRotation = (this.hourRotation + 30) % 360; 
-        } else {
-            //6 degrees for each minute increment of 5 minutes
-            //Modulo is for wrapping
-          this.minRotation = (this.minRotation + 30) % 360; 
-        }
-        //perform rotations
-        this.updateHands();
+            if (this.selectedHand === 'hour') {
+                //30 degrees for each hour
+                //Modulo is for wrapping
+            this.hourRotation = (this.hourRotation + 30) % 360; 
+            } else {
+                //6 degrees for each minute increment of 5 minutes
+                //Modulo is for wrapping
+            this.minRotation = (this.minRotation + 30) % 360; 
+            }
+            //perform rotations
+            this.updateHands();
     }
 
     //Rotates Handles 
     //Hours is by 30 degrees (since 360/12 = 30)
     //Minute is by 30 degrees for 5 minutes (360/60 = 6degrees per minute. 5min*6 = 30degrees for 5 minutes)
     decrement() {
-        if (this.selectedHand === 'hour') {
-            this.hourRotation = (this.hourRotation - 30 + 360) % 360;
-        } else {
-            this.minRotation = (this.minRotation - 30 + 360) % 360;
-        }
-        this.updateHands();
+            if (this.selectedHand === 'hour') {
+                this.hourRotation = (this.hourRotation - 30 + 360) % 360;
+            } else {
+                this.minRotation = (this.minRotation - 30 + 360) % 360;
+            }
+            this.updateHands();
     }
     
     //Generates the clock's face and hands
@@ -741,9 +1127,10 @@ class Clock extends Artifact{
         clockEntity.setAttribute('position', this.position.toString());
         clockEntity.setAttribute('id', this.htmlElementId);
 
-        // Assuming glTF model is used for the clock face
-        //clockEntity.setAttribute('gltf-model', './path/to/clockModel.gltf');
-
+        //If glTF found, use it for the clock face, otherwise create placeholders
+        if (this.faceModelUrl) {
+            clockEntity.setAttribute('gltf-model', this.faceModelUrl);
+        }else{
         //Clock face
         const clockFace = document.createElement('a-entity');
         clockFace.setAttribute('geometry', {primitive: 'cylinder', height: 0.1, radius: 0.3});
@@ -757,8 +1144,10 @@ class Clock extends Artifact{
         //Append faceEntity 
         //Done before the hands to ensure hands are on top
         clockEntity.appendChild(clockFace);
-
-       // Wide Increment Button
+        }
+        
+        //Generate hands and interaction buttons if interaction is available
+        // Wide Increment Button
         const clockIncButton = document.createElement('a-entity');
         clockIncButton.setAttribute('circles-button', `type: box; button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); width: 1.0; height: 0.2; depth: 0.1`);
         clockIncButton.setAttribute('scale', "1 0.1 1");
@@ -766,6 +1155,8 @@ class Clock extends Artifact{
         clockIncButton.setAttribute('position', "0.5 -0.8 0.05"); 
         clockIncButton.addEventListener('click', () => {
             this.increment();
+            //Check if Input matches Passcode
+            this.checkUnlock();
         });
         clockEntity.appendChild(clockIncButton);
 
@@ -777,6 +1168,8 @@ class Clock extends Artifact{
         clockDecButton.setAttribute('position', "-0.5 -0.8 0.05"); 
         clockDecButton.addEventListener('click', () => {
             this.decrement();
+            //Check if Input matches Passcode
+            this.checkUnlock();
         });
         clockEntity.appendChild(clockDecButton);
 
@@ -804,35 +1197,40 @@ class Clock extends Artifact{
 
         //Assign the reference to buttonText in the class for later use
         this.selectButtonText = buttonText;
-        //Append the clock entity to the scene
-        document.querySelector('a-scene').appendChild(clockEntity);
 
-        //Generate hands
         this.generateHand(clockEntity, 'hour', this.hourRotation);
         this.generateHand(clockEntity, 'minute', this.minRotation);
-
+        
+        
+        //Append the clock entity to the scene in either case
+        document.querySelector('a-scene').appendChild(clockEntity);
     }
 
     //Creates a cylinder for hands and corresponding Id for selection
     generateHand(clockEntity, type, rotation) {
         
         const clockHand = document.createElement('a-entity');
-        //For height if handle is "hour"-type give short height, otherwise set height to be longer for minute
-        clockHand.setAttribute('geometry', {primitive: 'cylinder', height: type === 'hour' ? 0.1 : 0.15, radius: 0.01});
-        //if hour make it orange, if minute make it blue (for easier differentiation)
-        clockHand.setAttribute('material', 'color', type === 'hour' ? '#E17E0F' : '#0F25E1');
-        
-        
-        //Position and Rotations, having minute be pointing rightwards (90 degrees) initially for easy viewing
-        //Afterwards rotation increments/decrements normally
-        if (type === 'minute') {
-            //HAVE POSITION BE NEGATIVE OF PIVOT (OR SLIGHLTY ABOVE PIVOT SO THAT BOTTOM END IS AT PIVOT'S LOCATION)
-            clockHand.setAttribute('position', '-0.07 0 0.1');
-            clockHand.setAttribute('rotation', `0 0 ${rotation + 90}`);
-        } else {
-            //HAVE POSITION BE NEGATIVE OF PIVOT (OR SLIGHLTY ABOVE PIVOT SO THAT BOTTO END IS AT PIVOT'S LOCATION)
-            clockHand.setAttribute('position', '0 0.1 0.1');
-            clockHand.setAttribute('rotation', `0 0 ${rotation}`);
+        if (this.handlesModelUrl) {
+            //Use GLTF model for hands
+            handEntity.setAttribute('gltf-model', this.handlesModelUrl);
+            //Scale down for the hour hand
+            handEntity.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
+        } else{
+            //For height if handle is "hour"-type give short height, otherwise set height to be longer for minute
+            clockHand.setAttribute('geometry', {primitive: 'cylinder', height: type === 'hour' ? 0.1 : 0.15, radius: 0.01});
+            //if hour make it orange, if minute make it blue (for easier differentiation)
+            clockHand.setAttribute('material', 'color', type === 'hour' ? '#E17E0F' : '#0F25E1');
+            
+            
+            //Position and Rotations, having minute be pointing rightwards (90 degrees) initially for easy viewing
+            //Afterwards rotation increments/decrements normally
+            if (type === 'minute') {
+                clockHand.setAttribute('position', '-0.07 0 0.1');
+                clockHand.setAttribute('rotation', `0 0 ${rotation + 90}`);
+            } else {
+                clockHand.setAttribute('position', '0 0.1 0.1');
+                clockHand.setAttribute('rotation', `0 0 ${rotation}`);
+            }
         }
 
         //Assign an ID based on the hand type for easy selection
@@ -840,8 +1238,6 @@ class Clock extends Artifact{
         clockHand.setAttribute('id', `${this.htmlElementId}-${type}-hand`);
 
         //Adding interaction capabilities
-        clockHand.addEventListener('mouseenter', () => this.hoverStart(type));
-        clockHand.addEventListener('mouseleave', () => this.hoverEnd(type));
         clockHand.addEventListener('click', () => this.select(type));
 
         //Attach the hand to the clock
@@ -866,6 +1262,40 @@ class Clock extends Artifact{
         } else if (this.selectedHand === 'minute' && minuteHand) {
             minuteHand.setAttribute('rotation', `0 0 ${this.minRotation}`);
         }
+    }
+    //Passcode checker, works the same way as suitcase's
+    checkUnlock() {
+        const currentRotations = [this.hourRotation, this.minRotation];
+        //Iterate over the passcode array, if it matches the digit-locks sequence then unlock is activated (set to true)
+        const unlocked = this.passcode.every((value, index) => value === currentRotations[index]);
+
+        this.locked = !unlocked;
+        //Check if rewards is valid
+        if(!Array.isArray(this.rewards)){
+            console.log("Rewards Array is not Valid", this.rewards)
+        }
+
+        if (unlocked) {
+            console.log("Clock unlocked!");
+            
+            //Loop over the rewards array and add the string into the inventory
+            this.rewards.forEach(reward => {
+                this.artifactSystem.addToInventory(reward);
+                console.log("Reward Obtained: ", this.rewards);
+            });
+
+        } else {
+            console.log("Clock remains locked.");
+        }
+
+        //DEBUGGING (UNHIDE WHEN WANTING TO CHECK SEQUENCE VS INPUTS)
+        console.log(`Current Rotations: Hour: ${this.hourRotation}, Minute: ${this.minRotation}`);
+        console.log(`Passcode: Hour: ${this.passcode[0]}, Minute: ${this.passcode[1]}`);
+    }
+    //Loop through "itemsToUnlock" array and check if there's a match in inventory (search for the required items in inventory)
+    //returns true if it finds a match
+    canInteract() {
+        return this.itemsToUnlock.every(item => this.artifactSystem.playerInventory[item]);
     }
 
 
