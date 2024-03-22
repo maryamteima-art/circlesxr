@@ -3,8 +3,7 @@
 
 import { ArtifactSystem } from './artifactSystem.js';
 import { ControllerSystem } from './controllerSystem.js';
-import { MultiplayerSystem } from './multiplayerSystem.js';
-
+import { UISystem } from './uiSystem.js';
 
 
 export class GameSystem {
@@ -12,18 +11,28 @@ export class GameSystem {
         //Initialize Systems
         //Pass GameSystem instance to ArtifactSystem (for back reference)
         this.artifactSystem = new ArtifactSystem(this);
-        // Pass GameSystem instance (for back-reference)
+        //Pass GameSystem instance (for back-reference)
         this.controllerSystem = new ControllerSystem(this);
+        //Pass GameSystem instance (for back-reference)
+        this.uiSystem = new UISystem(this);
         console.log("GameSystem initialized");
+        //Timer and game state
+        //Example: 300 seconds (5 minutes)
+        this.gameTime = 300; 
+        this.gameOver = false;
+        this.win = false;
     }
     //Initial game setup
     initialize() {
         //LOAD FIRST THEN DETECT INPUTS, otherwise it gives error since there's nothing to detect
-        // Initialize and load artifacts 
+        //Initialize and load artifacts 
         this.artifactSystem.loadArtifacts();
-        // Setup device detection
+        //Setup device detection
         this.controllerSystem.handleInput();
         console.log("Game initialized and ready");
+        //Setup cutscene
+        //this.uiSystem.initializeCutscenes();
+        this.startTimer();
     }
 
     //Maps "click, keys, swipes" actions to artifact methods
@@ -33,16 +42,18 @@ export class GameSystem {
         // Obtain player's position
         const playerPos = this.playerPosition();
         
-        // Attempt to find an artifact in proximity based on the player's position
+        //Attempt to find an artifact in proximity based on the player's position
         const artifactDetected = this.artifactSystem.findArtifactInProximity(playerPos);
         
-        // Check if an artifact was found
+        //Check if an artifact was found
         if (artifactDetected){ //&& artifactDetected.canInteract()) {
             console.log("Artifact in proximity for interaction:", artifactDetected);
             // Call handleArtifactAction with the found artifact and the action
             this.artifactSystem.handleArtifactAction(artifactDetected, action);
         } else {
             console.log("No artifact in proximity for interaction.");
+            //UI update
+            this.uiSystem.updateInteractionMessage("No artifact in proximity");
         }
 
     }
@@ -69,18 +80,43 @@ export class GameSystem {
         // Default to true for other artifacts or specify other conditions as needed
         return true;
     }
+    
+    startTimer() {
+        //300 seconds for 5min
+        this.gameTime = 300; 
+        this.timerInterval = setInterval(() => {
+            this.gameTime--;
+            console.log("Time left:", this.gameTime);
+            
+            // Update the timer display through UISystem
+            this.uiSystem.updateTimerDisplay(this.gameTime);
 
-    update(deltaTime) {
-        // Main game loop update method
-        //For updating game state, handling player actions, etc.
+            if (this.gameTime <= 0) {
+                clearInterval(this.timerInterval); 
+                //Only check if the game hasn't already been won
+                if (!this.win) { 
+                    this.checkWinCondition(); 
+                }
+            }
+            //Update every second
+        }, 1000); 
     }
-
-    // This function manages updates to player progress, such as levels, scores, or achievements
-    handlePlayerProgress() {
-        // Implementation for updating player progress
+    //Win state
+    checkWinCondition() {
+        //If the player has the necklace and time is above 0, they win
+        if (this.artifactSystem.playerInventory['necklace'] && this.gameTime > 0) {
+            console.log("Congratulations! You have won the game.");
+            this.win = true;
+            this.uiSystem.showWinOverlay();
+        } else {
+            console.log("Game Over. You didn't find the necklace in time");
+            this.win = false;
+            this.uiSystem.showGameOverOverlay();
+        }
+        //Mark game as over
+        this.gameOver = true;
+        // Proceed to handle the end of the game
+        this.endGame();
     }
-
-    //Game start, game over conditions, or level transitions
-
-    // Additional methods as necessary for your game's functionality
+    
 }

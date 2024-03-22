@@ -14,6 +14,12 @@ export class ArtifactSystem {
         this.playerInventory = {};
         //Initially false, indicating the clock is locked
         this.clockUnlock = false; 
+        
+        //Progress Bar
+        //this.initializeProgressBar();
+        //2 suitcases, 1 door, 1 sewing machine, 1 necklace, 1 clock
+        this.totalArtifacts = 6;
+        this.unlockedArtifacts = 0; 
 
     }
 
@@ -31,7 +37,9 @@ export class ArtifactSystem {
           rotation: '0 45 0',
           scale: '1 1 1',
           //Remove geometry and material when importing gltf and unhide the URL below
-          //modelUrl: './path/model.gltf',
+          modelUrl: null,
+          objModelUrl:null, 
+          mtlUrl:null,
           geometry: 'primitive:octahedron; radius:0.5;',
           material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
           title: '1940s Filtering Process',
@@ -44,7 +52,9 @@ export class ArtifactSystem {
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
-            modelUrl: null, //'./path/model.gltf',
+            modelUrl: null, 
+            objModelUrl:null,
+            mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Air Transport 1930s',
@@ -58,7 +68,9 @@ export class ArtifactSystem {
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
-            modelUrl: null, //'./path/model.gltf',
+            modelUrl: null, 
+            objModelUrl:null, 
+            mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Quartz Clock in 1927',
@@ -72,7 +84,9 @@ export class ArtifactSystem {
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
-            modelUrl: null, //'./path/model.gltf',
+            modelUrl: null,
+            objModelUrl:null,
+            mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: '1920s Rayon Fabric',
@@ -86,7 +100,9 @@ export class ArtifactSystem {
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
-            modelUrl: null, //'./path/model.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null, 
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'The Mallard 4468',
@@ -100,7 +116,9 @@ export class ArtifactSystem {
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
-            modelUrl: null, //'./path/model.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
             material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'First Espresso Machine',
@@ -115,12 +133,17 @@ export class ArtifactSystem {
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [1, 2, 3] ,
             //Rewards/items collected when unlocking the suitcase
-            rewards:["handles"],
-            newModelUrl: null
+            rewards:["code-3:30"],
+            //newEntity/unlock
+            newModelUrl: null,
+            newObjModelUrl:null, 
+            newMtlUrl:null
           },
           {
             type: 'suitcase',
@@ -131,10 +154,15 @@ export class ArtifactSystem {
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             ////Use null if not using a GLTF model
             modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [4,5],
             rewards:["necklace"],
-            newModelUrl: null 
+            //new entity/unlock
+            newModelUrl: null,
+            newObjModelUrl:null, 
+            newMtlUrl:null 
           },
           {
             type: 'clock',
@@ -147,18 +175,28 @@ export class ArtifactSystem {
             rewards:["thread"],
             lockText: 'Locked! Missing Component!',
             unlockText: 'Interaction Available!',
-            itemsToUnlock: ["handles"],
+            itemsToUnlock: [""],
             faceModelUrl: null, 
             handlesModelUrl: null,
-            newFaceModelUrl:null 
+            newFaceModelUrl:null,
+            //handles
+            objModelUrl:null, 
+            mtlUrl:null, 
+            faceObjModelUrl:null, 
+            faceMtlUrl:null, 
+            //face
+            newObjModelUrl:null, 
+            newMtlUrl:null
           },
           //Make sure ID is unique (not the same as obstacle or other grabbables)
           {
             type: 'grabbable',
             position: '-8 1 4',
             htmlElementId: '1',
-            ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            //Use null if not using a GLTF model
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             rewards:["coupon"]
           },
@@ -168,7 +206,9 @@ export class ArtifactSystem {
             position: '8 1 4',
             htmlElementId: '2',
             ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             rewards:["fabric"]
           },
@@ -179,13 +219,17 @@ export class ArtifactSystem {
             position: '0 1 -4',
             htmlElementId: '3',
             ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             itemsToUnlock:["fabric", "thread"], 
-            reward:["code"], 
+            reward:["code-12"], 
             lockText:"Locked! Missing Sewing Materials", 
-            unlockText:"Sewing....New Fabric Created"
+            unlockText:"Sewing....\n Code-12 Obtained"
         },
+        //Unhide the door for the next run (this one we don't have the door)
+        /*
         //Door
         //Make sure ID is unique (not the same as other obstacles or grabbables)
         {
@@ -193,13 +237,15 @@ export class ArtifactSystem {
             position: '0 1 1',
             htmlElementId: '4',
             ////Use null if not using a GLTF model
-            modelUrl: null, //'./path/to/suitcaseModel.gltf',
+            modelUrl: null,
+            objModelUrl:null, 
+            mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             itemsToUnlock:["coupon"], 
             reward:["checkpoint"], 
             lockText:"Locked! Need Card Access", 
             unlockText:"Access Granted! Checkpoint Created"
-          },
+          },*/
       ];
 
     //METHODS
@@ -254,7 +300,11 @@ export class ArtifactSystem {
         //Check if a GLTF model URL is provided, otherwise use geometry and material
         if (data.modelUrl) {
             artifactEntity.setAttribute('gltf-model', data.modelUrl);
-        } else {
+        } else if (data.objModelUrl && data.mtlUrl) {
+            // Set the obj-model attribute using the OBJ and MTL files
+            artifactEntity.setAttribute('obj-model', `obj: url(${data.objModelUrl}); mtl: url(${data.mtlUrl})`);
+        }
+        else {
             artifactEntity.setAttribute('geometry', data.geometry);
             artifactEntity.setAttribute('material', data.material);
         }
@@ -287,6 +337,11 @@ export class ArtifactSystem {
             data.passcode,
             data.rewards,
             data.newModelUrl,
+            data.objModelUrl, 
+            data.mtlUrl,
+            //unlock
+            data.newObjModelUrl, 
+            data.newMtlUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this 
         );
@@ -312,6 +367,13 @@ export class ArtifactSystem {
             data.faceModelUrl,
             data.handlesModelUrl,
             data.newFaceModelUrl,
+            data.objModelUrl, 
+            data.mtlUrl,
+            data.faceObjModelUrl, 
+            data.faceMtlUrl, 
+            //New face
+            data.newObjModelUrl, 
+            data.newMtlUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this
         );
@@ -334,6 +396,8 @@ export class ArtifactSystem {
             //Use null (or delete) if using placeholder geometry
             data.modelUrl,
             data.rewards,
+            data.objModelUrl, 
+            data.mtlUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this 
         );
@@ -358,6 +422,8 @@ export class ArtifactSystem {
             data.reward, 
             data.lockText, 
             data.unlockText,
+            data.objModelUrl, 
+            data.mtlUrl,
             //Passing an artifactSystem instance to access it's inventory methods
             this 
         );
@@ -387,7 +453,7 @@ export class ArtifactSystem {
                 if (artifact instanceof Obstacle && !artifact.canInteract()) {
                     console.log(`Near ${artifact.name}, but cannot interact. Missing items.`);
                     //ADD UI MESSAGE
-                    //DISPLAY lockedText of artifact in UI
+                    
                     return null;
                 }
                 console.log('Near artifact: Interact initiated');
@@ -421,6 +487,13 @@ export class ArtifactSystem {
         console.log(`Artifact added to inventory: ${artifact}`);
         // Add artifact to inventory here
         this.playerInventory[artifact] = true;
+        //If necklace trigger a win condition
+        if (artifact === "necklace") {
+            // Call a method on `gameSystem` to check for win condition
+            this.gameSystem.checkWinCondition();
+            //update progress bar
+            //this.artifactSystem.updateProgressBar();
+        }
         // Print the current state of the inventory after adding the new artifact
         console.log("Current Inventory:", this.playerInventory);
     }
@@ -444,6 +517,73 @@ export class ArtifactSystem {
     removeFromArtifacts(htmlElementId) {
         //Filter out the artifact with the matching htmlElementId
         this.artifacts = this.artifacts.filter(artifact => artifact.htmlElementId !== htmlElementId);
+    }
+    
+    //Creates a text entity in camera and updates using lockText and unlockText of Suitcases, clock, doors, sewing machine
+    createOrUpdateUIText(message) {
+        // Obtain the A-Frame camera entity, which represents the player's view
+        const cameraEntity = CIRCLES.getMainCameraElement();
+    
+        // Check if the text entity already exists
+        let textEntity = document.getElementById('ui-text-entity');
+    
+        // If it doesn't exist, create a new text entity
+        if (!textEntity) {
+            textEntity = document.createElement('a-text');
+            textEntity.setAttribute('id', 'ui-text-entity');
+            textEntity.setAttribute('position', '-0.6 -0.5 -1'); 
+            textEntity.setAttribute('width', '2'); 
+            textEntity.setAttribute('color', 'white'); 
+    
+            // Append the text entity to the camera so it moves with the player
+            cameraEntity.appendChild(textEntity);
+        }
+    
+        // Update the message displayed by the text entity
+        textEntity.setAttribute('value', message);
+    }
+
+    //Progress Bar
+    //Creating the Bar
+    initializeProgressBar() {
+        //Camera
+        const cameraEntity = CIRCLES.getMainCameraElement();
+
+        //Create the backdrop bar (total progress)
+        const backdropBar = document.createElement('a-entity');
+        backdropBar.setAttribute('geometry', 'primitive: plane; width: 5; height: 0.5');
+        backdropBar.setAttribute('material', 'color: #ccc');
+        backdropBar.setAttribute('position', '-1 2 -4'); 
+
+        //Create the foreground bar (current progress)
+        const progressBar = document.createElement('a-entity');
+        //Starts with zero width
+        progressBar.setAttribute('geometry', 'primitive: plane; width: 0; height: 0.5'); 
+        progressBar.setAttribute('material', 'color: green');
+        //Slightly in front of the backdrop bar
+        progressBar.setAttribute('position', '-1 2 -3.5'); 
+
+        //Append bars to the camera
+        cameraEntity.appendChild(backdropBar);
+        cameraEntity.appendChild(progressBar);
+
+        //Store references for later updates
+        this.progressBar = progressBar;
+    }
+
+    //Increments the progress bar as items are unlocked
+    updateProgressBar() {
+        this.unlockedArtifacts++;
+        const progress = this.unlockedArtifacts / this.totalArtifacts;
+        const newWidth = 5 * progress; // Assuming the total width is 5 units
+
+        //Update the width of the progress bar
+        this.progressBar.setAttribute('geometry', 'width', newWidth);
+
+        //Since A-Frame's primitive planes grow in both directions, adjust the position to make growth appear to the right
+        //Adjust starting position based on new width
+        const newPositionX = -1 + newWidth / 2; 
+        this.progressBar.setAttribute('position', `${newPositionX} 2 -3.9`);
     }
     
 }
@@ -496,7 +636,7 @@ class Artifact {
 //Contains only select() interactions
 //references gameSystem since it requires access to playerInventory to add collected elements to inventory 
 class Grabbable extends Artifact{
-    constructor(position, htmlElementId, modelUrl, rewards, artifactSystem) {
+    constructor(position, htmlElementId, modelUrl, rewards, objModelUrl, mtlUrl,artifactSystem) {
         super();
         this.position = position;
         //The HTML ID of the suitcase entity
@@ -509,6 +649,8 @@ class Grabbable extends Artifact{
         this.artifactSystem = artifactSystem;
         //Reference to the object
         this.entity = null;
+        this.objModelUrl = objModelUrl; 
+        this.mtlUrl = mtlUrl ;
     }
 
     handleAction(action) {
@@ -536,6 +678,7 @@ class Grabbable extends Artifact{
         if (Array.isArray(this.rewards)) {
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
+                this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
             });
         } else {
             // If there's only a single reward, add it directly
@@ -563,7 +706,10 @@ class Grabbable extends Artifact{
         const grabEntity = document.createElement('a-entity');
 
         if (this.modelUrl) {
-            entity.setAttribute('gltf-model', this.modelUrl);
+            grabEntity.setAttribute('gltf-model', this.modelUrl);
+        }else if (this.objModelUrl && this.mtlUrl) {
+            // Set the obj-model attribute using the OBJ and MTL files
+            grabEntity.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
         }else{
         grabEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 0.5; width: 4`);
         grabEntity.setAttribute('material', 'color: red');
@@ -573,7 +719,17 @@ class Grabbable extends Artifact{
         grabEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
         
         //Adding listener
-        grabEntity.addEventListener('click', () => this.select());
+        grabEntity.addEventListener('click', () => {
+            const playerPosition = this.gameSystem.playerPosition();
+            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
+
+            // Check proximity before calling select()
+            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 2.5)) { // 2.5 units as interaction radius
+                this.select();
+            } else {
+                console.log("Player is too far to interact with the grabbable.");
+            }
+        });
 
         //Store the entity reference
         this.entity = grabEntity;
@@ -592,7 +748,7 @@ class Grabbable extends Artifact{
 //OBSTACLES
 //Artifacts that block the linear progression until an item is collected. I.E Door (requires "coupon" access in inventory), Sewing Machine (Requires "Fabric" and "Thread")
 class Obstacle extends Artifact{
-    constructor(position, htmlElementId, modelUrl, itemsToUnlock, reward, lockText, unlockText, artifactSystem) {
+    constructor(position, htmlElementId, modelUrl, itemsToUnlock, reward, lockText, unlockText, objModelUrl, mtlUrl, artifactSystem) {
         super();
         this.position = position;
         //The HTML ID of the suitcase entity
@@ -612,6 +768,8 @@ class Obstacle extends Artifact{
         this.artifactSystem = artifactSystem;
         //Reference to the object
         this.entity = null;
+        this.objModelUrl = objModelUrl; 
+        this.mtlUrl = mtlUrl;
     }
 
     handleAction(action) {
@@ -637,11 +795,14 @@ class Obstacle extends Artifact{
 
         if (allItemsPresent) {
             console.log(this.unlockText);
+            this.artifactSystem.createOrUpdateUIText(this.unlockText)
 
             //Executing specific actions based on the obstacle type
             switch (this.htmlElementId) {
                 case 'door':
                     console.log('Generating circlesXR checkpoint...');
+                    //update progress bar
+                    //this.artifactSystem.updateProgressBar();
                     //Generate circlesXR checkpoint 
                     break;
                 case 'sewing machine':
@@ -649,6 +810,8 @@ class Obstacle extends Artifact{
                     //Add digit code to inventory
                     this.artifactSystem.addToInventory(this.reward);
                     console.log(`${this.reward} added to inventory.`);
+                    //Update Progress Bar
+                    //this.artifactSystem.updateProgressBar();
                     break;
                 default:
                     console.log('Unknown obstacle type.');
@@ -666,6 +829,7 @@ class Obstacle extends Artifact{
         } else {
             // Required items not present, show lock text
             console.log(this.lockText);
+            this.artifactSystem.createOrUpdateUIText(this.lockText)
         }
 
     }
@@ -686,7 +850,10 @@ class Obstacle extends Artifact{
         const obEntity = document.createElement('a-entity');
 
         if (this.modelUrl) {
-            entity.setAttribute('gltf-model', this.modelUrl);
+            obEntity.setAttribute('gltf-model', this.modelUrl);
+        } else if (this.objModelUrl && this.mtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            obEntity.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
         }else{
             obEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 3; width: 2`);
             obEntity.setAttribute('material', 'color: blue');
@@ -695,8 +862,21 @@ class Obstacle extends Artifact{
         //Position
         obEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
         
-        //Adding listener
-        obEntity.addEventListener('click', () => this.select());
+        //Add click event listener
+        obEntity.addEventListener('click', () => {
+            //Copy player position
+            const playerPosition = new THREE.Vector3().copy(this.gameSystem.playerPosition());
+            //get obEntity position
+            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
+
+            //Check if player is within proximity. 
+            //2.5 is the interaction radius
+            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 2.5)) { 
+                this.select();
+            } else {
+                console.log("Player is too far to interact with the obstacle.");
+            }
+        });
 
         //Store the entity reference
         this.entity = obEntity;
@@ -716,7 +896,7 @@ class Obstacle extends Artifact{
 //Can manipulate digits within the suitcase 
 //Contains only increment and decrement interactions
 class Suitcase extends Artifact{
-    constructor(digitCount, position, htmlElementId, modelUrl, passcode, rewards, newModelUrl, artifactSystem) {
+    constructor(digitCount, position, htmlElementId, modelUrl, passcode, rewards, newModelUrl, objModelUrl, mtlUrl , newObjModelUrl, newMtlUrl, artifactSystem) {
         super();
         //how many locks in suitcase
         this.digitCount = digitCount;
@@ -739,6 +919,11 @@ class Suitcase extends Artifact{
         //Ensuring methods that use `this.artifactSystem` are bound correctly
         this.checkUnlock = this.checkUnlock.bind(this);
         this.newModelUrl = newModelUrl;
+        this.objModelUrl = objModelUrl;
+        this.mtlUrl = mtlUrl;
+        //unlock
+        this.newObjModelUrl = newObjModelUrl; 
+        this.newMtlUrl = newMtlUrl;
     }
 
     handleAction(action) {
@@ -879,10 +1064,21 @@ class Suitcase extends Artifact{
         const suitcaseEntity = document.createElement('a-entity');
         //map its id
         suitcaseEntity.setAttribute('id', this.htmlElementId);
+       
+        //If gltf use it
+        if (this.modelUrl) {
+            suitcaseEntity.setAttribute('gltf-model', this.modelUrl);
+            //if obj use it
+        } else if (this.objModelUrl && this.mtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            suitcaseEntity.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
+            //Create default/placeholders
+        }else{
         //Sets the width based on how many locks there are (3 locks = medium width, 6 locks = large width, etc)
         suitcaseEntity.setAttribute('geometry', `primitive: box; depth: 0.5; height: 0.5; width: ${this.digitCount * 0.5}`);
         //Muted brown
         suitcaseEntity.setAttribute('material', 'color: #652A1D');
+        }
         //Position suitcase
         suitcaseEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
         
@@ -994,13 +1190,17 @@ class Suitcase extends Artifact{
         //update the locked state in the class 
         //Initially locked is true, so when unlocked becomes true, locked flips to false (since object is now unlocked)
         this.locked = !unlocked;
+        //Increment progress Bar
+        //this.artifactSystem.updateProgressBar();
         if (unlocked) {
             console.log("Suitcase unlocked!");
+            this.artifactSystem.createOrUpdateUIText("Suitcase unlocked!")
             
             //Loop over the rewards array, and add the string into the inventory
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
                 console.log("Reward Obtained: ", this.rewards);
+                this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
             });
             // Remove the original entity
             const entity = document.getElementById(this.htmlElementId);
@@ -1024,7 +1224,10 @@ class Suitcase extends Artifact{
         // Use GLTF model if available, otherwise use placeholder geometry
         if (this.newModelUrl) {
             unlockedEntity.setAttribute('gltf-model', this.newModelUrl);
-        } else {
+        } else if (this.newObjModelUrl && this.newMtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            unlockedEntity.setAttribute('obj-model', `obj: url(${this.newObjModelUrl}); mtl: url(${this.newMtlUrl})`);
+        }else {
             unlockedEntity.setAttribute('geometry', 'primitive: box; depth: 0.5; height: 0.5; width: 1');
             unlockedEntity.setAttribute('material', 'color: green'); // Indicate unlocked
         }
@@ -1039,7 +1242,7 @@ class Suitcase extends Artifact{
 //Can manipulate digits within the clock (hour and minute) 
 //Contains only increment (clockwise) and decrement (counter clockwise) interactions
 class Clock extends Artifact{
-    constructor(position, htmlElementId, passcode, rewards, lockText, unlockText, itemsToUnlock, faceModelUrl,handlesModelUrl, newFaceModelUrl, artifactSystem) {
+    constructor(position, htmlElementId, passcode, rewards, lockText, unlockText, itemsToUnlock, faceModelUrl,handlesModelUrl, newFaceModelUrl, objModelUrl, mtlUrl, faceObjModelUrl, faceMtlUrl, newObjModelUrl, newMtlUrl,artifactSystem) {
         super();
         this.position = position;
         this.htmlElementId = htmlElementId;
@@ -1073,6 +1276,14 @@ class Clock extends Artifact{
         this.checkUnlock = this.checkUnlock.bind(this);
         //new gltf model when unlocked
         this.newFaceModelUrl = newFaceModelUrl;
+        //Handles
+        this.objModelUrl = objModelUrl;
+        this.mtlUrl = mtlUrl;
+        this.faceObjModelUrl = faceObjModelUrl; 
+        this.faceMtlUrl = faceMtlUrl;
+        //unlock face
+        this.newObjModelUrl = newObjModelUrl; 
+        this.newMtlUrl = newMtlUrl;
       }
 
     handleAction(action) {
@@ -1103,6 +1314,7 @@ class Clock extends Artifact{
        
             //DISPLAY UI
             console.log(`${this.unlockText}`);
+            this.artifactSystem.createOrUpdateUIText(this.unlockText);
         
             if (this.canSelect) {
                 this.currentTypeIndex = (this.currentTypeIndex + 1) % this.types.length;
@@ -1161,6 +1373,9 @@ class Clock extends Artifact{
         //If glTF found, use it for the clock face, otherwise create placeholders
         if (this.faceModelUrl) {
             clockEntity.setAttribute('gltf-model', this.faceModelUrl);
+        }else if (this.faceObjModelUrl && this.faceMtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            clockEntity.setAttribute('obj-model', `obj: url(${this.faceObjModelUrl}); mtl: url(${this.faceMtlUrl})`);
         }else{
         //Clock face
         const clockFace = document.createElement('a-entity');
@@ -1243,10 +1458,14 @@ class Clock extends Artifact{
         const clockHand = document.createElement('a-entity');
         if (this.handlesModelUrl) {
             //Use GLTF model for hands
-            handEntity.setAttribute('gltf-model', this.handlesModelUrl);
+            clockHand.setAttribute('gltf-model', this.handlesModelUrl);
             //Scale down for the hour hand
-            handEntity.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
-        } else{
+            clockHand.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
+        } else if (this.objModelUrl && this.mtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            clockHand.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
+            clockHand.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
+        }else{
             //For height if handle is "hour"-type give short height, otherwise set height to be longer for minute
             clockHand.setAttribute('geometry', {primitive: 'cylinder', height: type === 'hour' ? 0.1 : 0.15, radius: 0.01});
             //if hour make it orange, if minute make it blue (for easier differentiation)
@@ -1301,6 +1520,8 @@ class Clock extends Artifact{
         const unlocked = this.passcode.every((value, index) => value === currentRotations[index]);
 
         this.locked = !unlocked;
+        //UPdate Progress Bar
+        //this.artifactSystem.updateProgressBar();
         //Check if rewards is valid
         if(!Array.isArray(this.rewards)){
             console.log("Rewards Array is not Valid", this.rewards)
@@ -1308,11 +1529,13 @@ class Clock extends Artifact{
 
         if (unlocked) {
             console.log("Clock unlocked!");
+            this.artifactSystem.createOrUpdateUIText("Clock unlocked!")
             
             //Loop over the rewards array and add the string into the inventory
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
                 console.log("Reward Obtained: ", this.rewards);
+                this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
             });
             
             //Remove the original entity
@@ -1341,7 +1564,10 @@ class Clock extends Artifact{
         //Use GLTF model for the face if available, otherwise create a simple sphere as a placeholder
         if (this.newFaceModelUrl) {
             clockEntity.setAttribute('gltf-model', this.newFaceModelUrl);
-        } else {
+        } else if (this.newObjModelUrl && this.newMtlUrl) {
+            //Set the obj-model attribute using the OBJ and MTL files
+            clockEntity.setAttribute('obj-model', `obj: url(${this.newObjModelUrl}); mtl: url(${this.newMtlUrl})`);
+        }else {
             //Simple sphere to represent the clock face
             clockEntity.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
             clockEntity.setAttribute('material', 'color: #CCC');
