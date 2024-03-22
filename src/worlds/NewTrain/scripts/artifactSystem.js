@@ -229,7 +229,7 @@ export class ArtifactSystem {
             unlockText:"Sewing....\n Code-12 Obtained"
         },
         //Unhide the door for the next run (this one we don't have the door)
-        /*
+        
         //Door
         //Make sure ID is unique (not the same as other obstacles or grabbables)
         {
@@ -245,7 +245,7 @@ export class ArtifactSystem {
             reward:["checkpoint"], 
             lockText:"Locked! Need Card Access", 
             unlockText:"Access Granted! Checkpoint Created"
-          },*/
+          }
       ];
 
     //METHODS
