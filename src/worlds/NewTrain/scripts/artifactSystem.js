@@ -154,40 +154,41 @@ export class ArtifactSystem {
           },
           {
             type: 'suitcase',
-            digitCount: 3,
+            digitCount: 4,
             position: '-3 1 -3',
             htmlElementId: 'suitcase-1',
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
-            ////Use null if not using a GLTF model
-            modelUrl: null,
+            //Use null if not using a GLTF model
+            //CHANGE MODEL TO HAVE NO HANDLES TEXTURE 
+            modelUrl: "models/ClosedSuitcase.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
-            passcode: [1, 2, 3] ,
+            passcode: [6,3,2,9] ,
             //Rewards/items collected when unlocking the suitcase
-            rewards:["code-3:30"],
+            rewards:["code-3:00"],
             //newEntity/unlock
-            newModelUrl: null,
+            newModelUrl:"models/OpenSuitcase.glb",
             newObjModelUrl:null, 
             newMtlUrl:null
           },
           {
             type: 'suitcase',
-            digitCount: 2,
+            digitCount: 4,
             position: '3 1 -3',
             htmlElementId: 'suitcase-2',
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
-            ////Use null if not using a GLTF model
-            modelUrl: null,
+            //Use null if not using a GLTF model
+            modelUrl: null,//"models/ClosedSuitcase.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
-            passcode: [4,5],
+            passcode: [6,1,5,8],
             rewards:["necklace"],
             //new entity/unlock
-            newModelUrl: null,
+            newModelUrl: null,//"models/OpenSuitcase.glb",
             newObjModelUrl:null, 
             newMtlUrl:null 
           },
@@ -197,15 +198,16 @@ export class ArtifactSystem {
             htmlElementId: 'clock-1',
             //Flag it triggers
             //Passcode
-            passcode:[270,180],
+            passcode:[90,0],
             //Reward/item obtained when you unlock clock
             rewards:["thread"],
             lockText: 'Locked! Missing Component!',
             unlockText: 'Interaction Available!',
             itemsToUnlock: [""],
-            faceModelUrl: null, 
+            //CHANGE TO HAVE NO HANDLES
+            faceModelUrl: null,//"models/Clock.glb", 
             handlesModelUrl: null,
-            newFaceModelUrl:null,
+            newFaceModelUrl:null,//"models/Clock.glb",
             //handles
             objModelUrl:null, 
             mtlUrl:null, 
@@ -221,7 +223,7 @@ export class ArtifactSystem {
             position: '-8 1 4',
             htmlElementId: '1',
             //Use null if not using a GLTF model
-            modelUrl: null,
+            modelUrl: "models/Coupon.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
@@ -233,7 +235,7 @@ export class ArtifactSystem {
             position: '8 1 4',
             htmlElementId: '2',
             ////Use null if not using a GLTF model
-            modelUrl: null,
+            modelUrl: null,//"models/Fabric.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
@@ -251,9 +253,9 @@ export class ArtifactSystem {
             mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             itemsToUnlock:["fabric", "thread"], 
-            reward:["code-12"], 
+            reward:["code-6158"], 
             lockText:"Locked! Missing Sewing Materials", 
-            unlockText:"Sewing....\n Code-12 Obtained"
+            unlockText:"Sewing....\n Code-6158 Obtained"
         },
         //Door
         //Make sure ID is unique (not the same as other obstacles or grabbables)
@@ -1093,6 +1095,7 @@ class Suitcase extends Artifact{
         //If gltf use it
         if (this.modelUrl) {
             suitcaseEntity.setAttribute('gltf-model', this.modelUrl);
+            
             //if obj use it
         } else if (this.objModelUrl && this.mtlUrl) {
             //Set the obj-model attribute using the OBJ and MTL files
@@ -1497,11 +1500,11 @@ class Clock extends Artifact{
             clockHand.setAttribute('material', 'color', type === 'hour' ? '#E17E0F' : '#0F25E1');
             
             
-            //Position and Rotations, having minute be pointing rightwards (90 degrees) initially for easy viewing
+            //Position and Rotations, having minute be pointing rightwards (90 degrees)? initially for easy viewing
             //Afterwards rotation increments/decrements normally
             if (type === 'minute') {
                 clockHand.setAttribute('position', '-0.07 0 0.1');
-                clockHand.setAttribute('rotation', `0 0 ${rotation + 90}`);
+                clockHand.setAttribute('rotation', `0 0 ${rotation}`);
             } else {
                 clockHand.setAttribute('position', '0 0.1 0.1');
                 clockHand.setAttribute('rotation', `0 0 ${rotation}`);
