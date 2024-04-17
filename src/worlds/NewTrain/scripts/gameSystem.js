@@ -32,7 +32,7 @@ export class GameSystem {
         console.log("Game initialized and ready");
         //Setup cutscene
         //this.uiSystem.initializeCutscenes();
-        //this.startTimer();
+        this.startTimer();
     }
 
     //Maps "click, keys, swipes" actions to artifact methods
@@ -80,11 +80,12 @@ export class GameSystem {
     }
     
     startTimer() {
-        //300 seconds for 5min
-        this.gameTime = 300; 
+        //300 seconds is 5min
+        //3599 is 59min and 59sec
+        this.gameTime = 3599; 
         this.timerInterval = setInterval(() => {
             this.gameTime--;
-            console.log("Time left:", this.gameTime);
+            console.log("Timer:", this.gameTime);
             
             // Update the timer display through UISystem
             this.uiSystem.updateTimerDisplay(this.gameTime);

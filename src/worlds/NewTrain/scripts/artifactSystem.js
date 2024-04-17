@@ -18,10 +18,10 @@ export class ArtifactSystem {
         this.createOrUpdateUIImage = this.createOrUpdateUIImage.bind(this);
         
         //Progress Bar
-        //this.initializeProgressBar();
         //2 suitcases, 1 door, 1 sewing machine, 1 necklace, 1 clock
-        this.totalArtifacts = 6;
+        this.totalArtifacts = 5;
         this.unlockedArtifacts = 0; 
+        this.initializeProgressBar();
 
         //Camera UI Elements
         //Specific maps of images to solo items like teh clock and suitcases
@@ -487,7 +487,7 @@ export class ArtifactSystem {
     }
 
     findArtifactInProximity(playerPosition) {
-        const interactionRadius = 2.5; 
+        const interactionRadius = 5; 
         for (let artifact of this.artifacts) { 
             //Compare position property of an artifact with player and radius
             //Since artifacts positions are objects within the array {x,y,z}, need to convert to three.js to be compatible with playerPosition (since it's three.js vector)
@@ -526,6 +526,9 @@ export class ArtifactSystem {
     }
     
     //Adds rewards and artifacts to inventory
+    //Suitcases, Clocks, and sewing Machine give a reward or collectable when unlocking them
+    //These collected-items are then added to inventory to be used in states and UI
+    //The inventory is represented as an object. Each key in the object represents a reward, and the value (set to true) signifies the possession of that reward.
     addToInventory(artifact){
         console.log(`Artifact added to inventory: ${artifact}`);
         //Add artifact to inventory here
@@ -535,15 +538,14 @@ export class ArtifactSystem {
             // Call a method on `gameSystem` to check for win condition
             this.gameSystem.checkWinCondition();
             //update progress bar
-            //this.artifactSystem.updateProgressBar();
+            
         }
         // Print the current state of the inventory after adding the new artifact
         console.log("Current Inventory:", this.playerInventory);
     }
 
-    //Suitcases, Clocks, and sewing Machine give a reward or collectable when unlocking them
-    //These collected-items are then added to inventory to be used in states and UI
-    //The inventory is represented as an object. Each key in the object represents a reward, and the value (set to true) signifies the possession of that reward.
+    //CHECK IF THIS IS USED OR OUTDATED, DELETE IF YES
+    
     addRewardsToInventory(rewards) {
         //Iterates through the rewards array of objects
         //Update the player's inventory by setting each reward's corresponding boolean to true
@@ -590,7 +592,7 @@ export class ArtifactSystem {
         if (!textEntity) {
             textEntity = document.createElement('a-text');
             textEntity.setAttribute('id', 'ui-text-entity');
-            textEntity.setAttribute('position', '-0.6 -0.5 -1'); 
+            textEntity.setAttribute('position', '-0.6 -0.7 -1'); 
             textEntity.setAttribute('width', '2'); 
             textEntity.setAttribute('color', 'white'); 
     
@@ -607,9 +609,10 @@ export class ArtifactSystem {
         //Obtain the A-Frame camera entity, which represents the player's view
         const cameraEntity = CIRCLES.getMainCameraElement();
         
-        //Clear any existing images (backup) 
-        //if it interferes with items being collected each time, then remove)
-        const existingImages = cameraEntity.querySelectorAll('a-image');
+        //Get all existing images except the progress bar and the eye icon
+        const existingImages = cameraEntity.querySelectorAll('a-image:not(#progress-bar-image)');
+
+        //Remove/clear existing images except for the progress bar and the eye icon (refreshes UI)
         existingImages.forEach(img => img.parentNode.removeChild(img));
 
         //Add new images based on the inventory keys
@@ -646,7 +649,7 @@ export class ArtifactSystem {
             }
         });
     }
-    //For artifacts with coded papers as hints in inventory (suitcases and clocks) 
+    //For artifacts with coded papers in inventory (suitcases and clocks) 
     //Removes image from camera based on entity unlocked
     removeImageForArtifact(htmlElementId) {
         const imageElement = document.querySelector(`#image-${htmlElementId}`);
@@ -655,48 +658,37 @@ export class ArtifactSystem {
         }
     }
 
-    //Progress Bar
-    //Creating the Bar
+    //Generate a progress bar and attach to camera
     initializeProgressBar() {
-        //Camera
         const cameraEntity = CIRCLES.getMainCameraElement();
+    
+        //Create the image entity for the progress bar
+        //Bar0 is base image 
+        // Create the image entity for the progress bar
+        this.progressBarImage = document.createElement('a-image');
+        this.progressBarImage.setAttribute('src', 'images/bar0.png');
+        //ID for progress bar
+        this.progressBarImage.setAttribute('id', 'progress-bar-image'); 
+        this.progressBarImage.setAttribute('position', '1 -1.2 -2');
+        this.progressBarImage.setAttribute('width', '0.6');
+        this.progressBarImage.setAttribute('height', '0.2');
 
-        //Create the backdrop bar (total progress)
-        const backdropBar = document.createElement('a-entity');
-        backdropBar.setAttribute('geometry', 'primitive: plane; width: 5; height: 0.5');
-        backdropBar.setAttribute('material', 'color: #ccc');
-        backdropBar.setAttribute('position', '-1 2 -4'); 
-
-        //Create the foreground bar (current progress)
-        const progressBar = document.createElement('a-entity');
-        //Starts with zero width
-        progressBar.setAttribute('geometry', 'primitive: plane; width: 0; height: 0.5'); 
-        progressBar.setAttribute('material', 'color: green');
-        //Slightly in front of the backdrop bar
-        progressBar.setAttribute('position', '-1 2 -3.5'); 
-
-        //Append bars to the camera
-        cameraEntity.appendChild(backdropBar);
-        cameraEntity.appendChild(progressBar);
-
-        //Store references for later updates
-        this.progressBar = progressBar;
+        //Attach progress bar to the camera
+        cameraEntity.appendChild(this.progressBarImage);
     }
 
-    //Increments the progress bar as items are unlocked
+    //Swap images based on how many artifacts have been unlocked
+    //Door, Suitcase-1, clock, sewing machine, suitcase-2 = 5 progress tasks = 5 bar images 
     updateProgressBar() {
+        //Increment the number of unlocked artifacts
         this.unlockedArtifacts++;
-        const progress = this.unlockedArtifacts / this.totalArtifacts;
-        const newWidth = 5 * progress; // Assuming the total width is 5 units
-
-        //Update the width of the progress bar
-        this.progressBar.setAttribute('geometry', 'width', newWidth);
-
-        //Since A-Frame's primitive planes grow in both directions, adjust the position to make growth appear to the right
-        //Adjust starting position based on new width
-        const newPositionX = -1 + newWidth / 2; 
-        this.progressBar.setAttribute('position', `${newPositionX} 2 -3.9`);
+        //The number (number of artifacts completed) is the same as image number to enable quick mapping (just search for the same number in image name)
+        const imageName = `images/bar${this.unlockedArtifacts}.png`;
+        // Force A-Frame to update the element by re-setting the src attribute
+        this.progressBarImage.setAttribute('src', '');
+        this.progressBarImage.setAttribute('src', imageName);
     }
+
     
 }
 
@@ -835,16 +827,22 @@ class Grabbable extends Artifact{
         //Position
         grabEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
         
-        //Adding listener
-        grabEntity.addEventListener('click', () => {
-            const playerPosition = this.gameSystem.playerPosition();
-            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
+        //Adding circlesXR highlights/hover effects to indicate clickability
+        grabEntity.setAttribute('circles-interactive-object', 'type: highlight; highlight_color: rgb(255, 255, 0); hover_scale: 1.1; click_scale: 1.2; enabled: true');
 
-            // Check proximity before calling select()
-            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 2.5)) { // 2.5 units as interaction radius
+
+        //Adding listener for click/tap interaction
+        grabEntity.addEventListener('click', () => {
+            //Get positions
+            const playerPosition = this.artifactSystem.gameSystem.playerPosition();
+            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
+            
+            //If in proximity and click is initiated, perform select
+            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 5)) {
                 this.select();
             } else {
                 console.log("Player is too far to interact with the grabbable.");
+                this.artifactSystem.createOrUpdateUIText("Too far, move closer")
             }
         });
 
@@ -928,7 +926,7 @@ class Obstacle extends Artifact{
                 case 'door':
                     console.log('Generating circlesXR checkpoint...');
                     //update progress bar
-                    //this.artifactSystem.updateProgressBar();
+                    this.artifactSystem.updateProgressBar();
                     //Generate circlesXR checkpoint 
 
                     //update inventory images
@@ -944,7 +942,7 @@ class Obstacle extends Artifact{
                     //Remove items previously required to unlock the artifact from inventory (since they'r enow used)
                     this.artifactSystem.removeFromInventory(this.itemsToUnlock); 
                     //Update Progress Bar
-                    //this.artifactSystem.updateProgressBar();
+                    this.artifactSystem.updateProgressBar();
                     break;
                 default:
                     console.log('Unknown obstacle type.');
@@ -997,20 +995,23 @@ class Obstacle extends Artifact{
         
         //Id mapping
         obEntity.setAttribute('id', this.htmlElementId);
-        
-        //Add click event listener
-        obEntity.addEventListener('click', () => {
-            //Copy player position
-            const playerPosition = new THREE.Vector3().copy(this.gameSystem.playerPosition());
-            //get obEntity position
-            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
 
-            //Check if player is within proximity. 
-            //2.5 is the interaction radius
-            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 2.5)) { 
+        //Adding circlesXR clickable/hover effects
+        obEntity.setAttribute('circles-interactive-object', 'type: outline; hover_scale: 1.05; click_scale: 1.1; enabled: true');
+
+        
+        //Add click event listener for click/tap interactions
+        obEntity.addEventListener('click', () => {
+            //Get positions
+            const playerPosition = this.artifactSystem.gameSystem.playerPosition();
+            const artifactPosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
+            
+            //If in proximity and click is initiated, perform select
+            if (this.artifactSystem.proximity(playerPosition, artifactPosition, 5)) {
                 this.select();
             } else {
                 console.log("Player is too far to interact with the obstacle.");
+                this.artifactSystem.createOrUpdateUIText("Too far, move closer")
             }
         });
 
@@ -1344,10 +1345,11 @@ class Suitcase extends Artifact{
         //Initially locked is true, so when unlocked becomes true, locked flips to false (since object is now unlocked)
         this.locked = !unlocked;
         //Increment progress Bar
-        //this.artifactSystem.updateProgressBar();
         if (unlocked) {
             console.log("Suitcase unlocked!");
             this.artifactSystem.createOrUpdateUIText("Suitcase unlocked!")
+            //update progress bar
+            this.artifactSystem.updateProgressBar();
             
             //Loop over the rewards array, and add the string into the inventory (and display image to camera)
             this.rewards.forEach(reward => {
@@ -1401,6 +1403,7 @@ class Suitcase extends Artifact{
             this.artifactSystem.removeImageForArtifact(this.htmlElementId);
             //Remove coded paper from inventory
             this.artifactSystem.removeFromInventory(this.itemsToUnlock);
+            this.artifactSystem.removeFromInventory(['otherFabric']);
         } else {
             //Default rotation
             unlockedEntity.setAttribute('rotation', '0 0 0');
@@ -1698,8 +1701,7 @@ class Clock extends Artifact{
         const unlocked = this.passcode.every((value, index) => value === currentRotations[index]);
 
         this.locked = !unlocked;
-        //UPdate Progress Bar
-        //this.artifactSystem.updateProgressBar();
+        
         //Check if rewards is valid
         if(!Array.isArray(this.rewards)){
             console.log("Rewards Array is not Valid", this.rewards)
@@ -1713,6 +1715,9 @@ class Clock extends Artifact{
 
             //Remove coded papers from inventory (passing the item name directly since other methods (passing itemsToUnlock list and Rewards list) didn't work)
             this.artifactSystem.removeFromInventory(['paper']);
+
+            //Update Progress Bar
+            this.artifactSystem.updateProgressBar();
 
             
             //Loop over the rewards array and add the string into the inventory 

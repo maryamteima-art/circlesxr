@@ -189,7 +189,7 @@ export class UISystem {
         if (!timerTextEntity) {
             timerTextEntity = document.createElement('a-text');
             timerTextEntity.setAttribute('id', 'timer-text-entity');
-            timerTextEntity.setAttribute('position', '0 0.5 -2'); 
+            timerTextEntity.setAttribute('position', '1 -0.9 -2'); 
             timerTextEntity.setAttribute('align', 'center');
             cameraEntity.appendChild(timerTextEntity);
         }
@@ -201,7 +201,7 @@ export class UISystem {
         const seconds = timeLeft % 60;
         const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-        timerTextEntity.setAttribute('value', `Time Left: ${formattedTime}`);
+        timerTextEntity.setAttribute('value', `Timer: ${formattedTime}`);
     }
 
 }
