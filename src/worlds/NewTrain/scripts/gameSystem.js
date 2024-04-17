@@ -32,7 +32,7 @@ export class GameSystem {
         console.log("Game initialized and ready");
         //Setup cutscene
         //this.uiSystem.initializeCutscenes();
-        this.startTimer();
+        //this.startTimer();
     }
 
     //Maps "click, keys, swipes" actions to artifact methods
@@ -52,8 +52,6 @@ export class GameSystem {
             this.artifactSystem.handleArtifactAction(artifactDetected, action);
         } else {
             console.log("No artifact in proximity for interaction.");
-            //UI update
-            this.uiSystem.updateInteractionMessage("No artifact in proximity");
         }
 
     }

@@ -14,12 +14,29 @@ export class ArtifactSystem {
         this.playerInventory = {};
         //Initially false, indicating the clock is locked
         this.clockUnlock = false; 
+        //binding
+        this.createOrUpdateUIImage = this.createOrUpdateUIImage.bind(this);
         
         //Progress Bar
         //this.initializeProgressBar();
         //2 suitcases, 1 door, 1 sewing machine, 1 necklace, 1 clock
         this.totalArtifacts = 6;
         this.unlockedArtifacts = 0; 
+
+        //Camera UI Elements
+        //Specific maps of images to solo items like teh clock and suitcases
+        //for elements like suitcases and clocks, there are pieces of paper that reveal codes.
+        //Once a suitcase (or clock) is unlocked, there's no point in keeping the coded papers. 
+        //Since these coded papers are not in a list, we need to create a dictionary that specifies which images is for which Id (suitcase id and clock id)
+        //This allows for specific deletion of images based on the passcoded element being unlocked
+        
+        //Suitcase-1 is not included in this map since it is an observational puzzle (code is obtained from looking at posters)
+        this.artifactToImageMap = {
+            'suitcase-2': 'paper.png',
+            //This is sewing machine
+            'sewingMachine': 'otherFabric.png'
+            // Add more mappings as needed
+        };
 
     }
 
@@ -33,7 +50,7 @@ export class ArtifactSystem {
     artifactsData = [
         {
           type: 'view-only',
-          position: '1 1 -5',
+          position: '-1.32 1.798 -51.4',
           rotation: '0 45 0',
           scale: '1 1 1',
           //Remove geometry and material when importing gltf and unhide the URL below
@@ -41,14 +58,14 @@ export class ArtifactSystem {
           objModelUrl:null, 
           mtlUrl:null,
           geometry: 'primitive:octahedron; radius:0.5;',
-          material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+          material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
           title: '1940s Filtering Process',
           description: 'In the 1940s, milk filtration was primarily a mechanical process, using cloth filters to remove impurities. Pasteurization, heating milk to at least 145°F (62.8°C) for 30 minutes or 161°F (71.7°C) for 15 seconds, was a common method to kill harmful bacteria',
           label_text: '1940s Milk'
         },
         {
             type: 'view-only',
-            position: '6 1 -5',
+            position: '4.075 0.794 11.82',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -56,7 +73,7 @@ export class ArtifactSystem {
             objModelUrl:null,
             mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Air Transport 1930s',
             description: 'Douglas DC-3, introduced in the 1930s, revolutionized air transport with its efficiency and reliability, making commercial air travel more accessible. Other civilian aircraft of the era include the Ford Trimotor and the Boeing 247, which contributed to the development of commercial aviation',
             label_text: 'Air Transport 1930s'
@@ -64,7 +81,7 @@ export class ArtifactSystem {
           ,
         {
             type: 'view-only',
-            position: '2 1 -2',
+            position: '4.4 1.5 -45.71',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -72,14 +89,14 @@ export class ArtifactSystem {
             objModelUrl:null, 
             mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Quartz Clock in 1927',
             description: 'The development of the first quartz clock was in 1927 by the Canadian Engineers Warren Marrison and J.W. Horton at Bell Telephone Laboratories. A pivotal moment in timekeeping, as quartz clocks were far more accurate than mechanical clocks',
             label_text: 'Quartz Clock'
           },
         {
             type: 'view-only',
-            position: '6 1 3',
+            position: '4.075 0.794 0.342',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -87,14 +104,14 @@ export class ArtifactSystem {
             objModelUrl:null,
             mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: '1920s Rayon Fabric',
             description: 'In 1894, British inventors, Charles Cross, Edward Bevan, and Clayton Beadle, patented the first, safe production of artificial silk, named Viscose Rayon, composed of chemically processed cellulose. "Avtex Fibers Incorporated" first commercially produced Rayon in 1910 in the United States',
             label_text: 'Rayon Fabric'
           },
         {
             type: 'view-only',
-            position: '4 1 4',
+            position: '-6.18 1.4 -12.26',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -102,14 +119,14 @@ export class ArtifactSystem {
             objModelUrl:null, 
             mtlUrl:null, 
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'The Mallard 4468',
             description: 'On 3 July 1938, Mallard broke the world speed record for steam locomotives at 126 mph (203 km/h), which still stands today. This A4 class locomotive was designed by the British railway Engineer Sir Nigel Gresley',
             label_text: 'The Mallard Train'
           },
         {
             type: 'view-only',
-            position: '2 1 -10',
+            position: '-2.538 1.871 -39.517',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -117,14 +134,14 @@ export class ArtifactSystem {
             objModelUrl:null, 
             mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'First Espresso Machine',
             description: 'The invention of the espresso machine was by the Italian inventor Angelo Moriondo in 1884. Further improvements by Luigi Bezerra, Desiderio Pavoni and Achille Gaggia in 1904-1940s introduced the high-pressure extraction that defines espresso today',
             label_text: 'Espresso Machine'
           },
           {
               type: 'view-only',
-              position: '-2 1 -2',
+              position: '-3.38 1.2 -72.12',
               rotation: '0 45 0',
               scale: '1 1 1',
               //Remove geometry and material when importing gltf and unhide the URL below
@@ -132,14 +149,14 @@ export class ArtifactSystem {
               objModelUrl:null, 
               mtlUrl:null,
               geometry: 'primitive:octahedron; radius:0.5;',
-              material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+              material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
               title: 'Sewing in 1940s',
               description: 'Early sewing machines in the 1940s typically had between 1 to 2 gears for basic stitching functions. These machines were constructed from cast iron or steel, making them last well over 70 years but weighing 30-40 Ibs. The use of aluminum became more common in later models to reduce weight',
               label_text: 'Sewing Machine'
             },
         {
             type: 'view-only',
-            position: '-6 1 3',
+            position: '2.7 0.794 -70.45',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -147,7 +164,7 @@ export class ArtifactSystem {
             objModelUrl:null,
             mtlUrl:null,
             geometry: 'primitive:octahedron; radius:0.5;',
-            material: 'color:blue; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
+            material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Suitcases in 1940s',
             description: 'Suitcases began to transition from heavy trunks and wooden boxes into portable designs using fiberboard and plywood. Later incorporating synthetic materials in 1950s, like vinyl and nylon, for lighter, more durable, and water-resistant luggage marked a significant shift for train travel in Canada',
             label_text: '1940-1950s Luggage'
@@ -155,7 +172,7 @@ export class ArtifactSystem {
           {
             type: 'suitcase',
             digitCount: 4,
-            position: '-3 1 -3',
+            position: '3.7 0.927 -82.24',
             htmlElementId: 'suitcase-1',
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
@@ -167,7 +184,7 @@ export class ArtifactSystem {
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [6,3,2,9] ,
             //Rewards/items collected when unlocking the suitcase
-            rewards:["code-3:00"],
+            rewards:["paper"],
             //newEntity/unlock
             newModelUrl:"models/OpenSuitcase.glb",
             newObjModelUrl:null, 
@@ -176,38 +193,37 @@ export class ArtifactSystem {
           {
             type: 'suitcase',
             digitCount: 4,
-            position: '3 1 -3',
+            position: '-4.219 0.970 -94.266',
             htmlElementId: 'suitcase-2',
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             //Use null if not using a GLTF model
-            modelUrl: null,//"models/ClosedSuitcase.glb",
+            modelUrl: "models/ClosedSuitcase.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [6,1,5,8],
             rewards:["necklace"],
             //new entity/unlock
-            newModelUrl: null,//"models/OpenSuitcase.glb",
+            newModelUrl: "models/OpenSuitcase.glb",
             newObjModelUrl:null, 
             newMtlUrl:null 
           },
           {
             type: 'clock',
-            position: '0 1.5 -3', 
+            position: '3.448 0.543 -45.94', 
             htmlElementId: 'clock-1',
             //Flag it triggers
             //Passcode
-            passcode:[90,0],
+            passcode:[150,270],
             //Reward/item obtained when you unlock clock
             rewards:["thread"],
             lockText: 'Locked! Missing Component!',
             unlockText: 'Interaction Available!',
             itemsToUnlock: [""],
-            //CHANGE TO HAVE NO HANDLES
-            faceModelUrl: null,//"models/Clock.glb", 
-            handlesModelUrl: null,
-            newFaceModelUrl:null,//"models/Clock.glb",
+            faceModelUrl: "models/Clock.glb", 
+            handlesModelUrl: "models/Handles.glb",
+            newFaceModelUrl:"models/ClockOpen.glb",
             //handles
             objModelUrl:null, 
             mtlUrl:null, 
@@ -220,40 +236,40 @@ export class ArtifactSystem {
           //Make sure ID is unique (not the same as obstacle or other grabbables)
           {
             type: 'grabbable',
-            position: '-8 1 4',
+            position: '-2.4 -0.429 -12.54',
             htmlElementId: '1',
             //Use null if not using a GLTF model
             modelUrl: "models/Coupon.glb",
             objModelUrl:null, 
             mtlUrl:null,
-            //Rewards/items collected when unlocking the suitcase
+            //Rewards/items collected 
             rewards:["coupon"]
           },
           //Make sure ID is unique (not the same as obstacle or other grabbables)
           {
             type: 'grabbable',
-            position: '8 1 4',
+            position: '3 -0.45 0.8',
             htmlElementId: '2',
             ////Use null if not using a GLTF model
-            modelUrl: null,//"models/Fabric.glb",
+            modelUrl: "models/Fabric.glb",
             objModelUrl:null, 
             mtlUrl:null,
-            //Rewards/items collected when unlocking the suitcase
+            //Rewards/items collected 
             rewards:["fabric"]
           },
           //Sewing Machine
           //Make sure ID is unique (not the same as other obstacles or grabbables)
         {
             type: 'obstacle',
-            position: '0 1 -4',
-            htmlElementId: '3',
+            position: '-3.46 0.319 -69.81',
+            htmlElementId: 'sewingMachine',
             ////Use null if not using a GLTF model
-            modelUrl: null,
+            modelUrl: "models/SewingMachine.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase
             itemsToUnlock:["fabric", "thread"], 
-            reward:["code-6158"], 
+            reward:["otherFabric"], 
             lockText:"Locked! Missing Sewing Materials", 
             unlockText:"Sewing....\n Code-6158 Obtained"
         },
@@ -261,8 +277,8 @@ export class ArtifactSystem {
         //Make sure ID is unique (not the same as other obstacles or grabbables)
         {
             type: 'obstacle',
-            position: '0 1 1',
-            htmlElementId: '4',
+            position: '0 1 -24',
+            htmlElementId: 'door',
             ////Use null if not using a GLTF model
             modelUrl: null,
             objModelUrl:null, 
@@ -512,7 +528,7 @@ export class ArtifactSystem {
     //Adds rewards and artifacts to inventory
     addToInventory(artifact){
         console.log(`Artifact added to inventory: ${artifact}`);
-        // Add artifact to inventory here
+        //Add artifact to inventory here
         this.playerInventory[artifact] = true;
         //If necklace trigger a win condition
         if (artifact === "necklace") {
@@ -540,6 +556,22 @@ export class ArtifactSystem {
             console.log(`Reward collected: ${reward}`);
         });
     }
+
+    //Removes item from inventory (to accurately update UI images in Camera)
+    removeFromInventory(items) {
+        // Ensure items is always an array, even if a single item string is passed
+        items = Array.isArray(items) ? items : [items];
+
+        items.forEach(item => {
+            if (this.playerInventory[item]) {
+                delete this.playerInventory[item];
+                console.log(`Item removed from inventory: ${item}`);
+            } else {
+                console.log(`Item not found in inventory: ${item}`);
+            }
+        });
+    }
+
     //Removes artifact from array when it's collected or not interactable anymore
     removeFromArtifacts(htmlElementId) {
         //Filter out the artifact with the matching htmlElementId
@@ -568,6 +600,59 @@ export class ArtifactSystem {
     
         // Update the message displayed by the text entity
         textEntity.setAttribute('value', message);
+    }
+
+    //Creates a image entity in camera and updates using inventory elements match (key to filename matches)
+    createOrUpdateUIImage() {
+        //Obtain the A-Frame camera entity, which represents the player's view
+        const cameraEntity = CIRCLES.getMainCameraElement();
+        
+        //Clear any existing images (backup) 
+        //if it interferes with items being collected each time, then remove)
+        const existingImages = cameraEntity.querySelectorAll('a-image');
+        existingImages.forEach(img => img.parentNode.removeChild(img));
+
+        //Add new images based on the inventory keys
+        Object.keys(this.playerInventory).forEach((item, index) => {
+            if (this.playerInventory[item]) {
+                var imgEntity = document.createElement('a-image');
+                //Keys and image's names are the same, hence we can just use key as item name, and deduce which image to show for each collectable dynamically
+                imgEntity.setAttribute('src', `images/${item}.png`);
+                
+                //Adjust position for each item, this one is centre
+                //imgEntity.setAttribute('position', `${index * 0.55} 0 -2`); 
+                
+                //Seting position to bottom left, moving rightwards for each item
+                let xOffset = -1.2 + 0.6 * index; 
+                let yOffset = -0.9; 
+                imgEntity.setAttribute('position', `${xOffset} ${yOffset} -2`);
+                
+                imgEntity.setAttribute('width', '0.5');
+                imgEntity.setAttribute('height', '0.5');
+                cameraEntity.appendChild(imgEntity);
+            }
+        });
+    }
+    //For OBSTACLES ONLY
+    //Iterates over an array, and removes elements required to unlock the obstacle (to inidicate the items have been used)
+    removeUsedArtifactImages(usedItems) {
+        const cameraEntity = CIRCLES.getMainCameraElement();
+        //Loop over a list (in this case "itemsToUnlock" list which has Items that are required to unlock an obstacle or artifact)
+        usedItems.forEach(item => {
+            //Remove the images with the same names as elements in the array (since this indicates they've been used)
+            let imgEntity = cameraEntity.querySelector(`a-image[src="images/${item}.png"]`);
+            if (imgEntity) {
+                imgEntity.parentNode.removeChild(imgEntity);
+            }
+        });
+    }
+    //For artifacts with coded papers as hints in inventory (suitcases and clocks) 
+    //Removes image from camera based on entity unlocked
+    removeImageForArtifact(htmlElementId) {
+        const imageElement = document.querySelector(`#image-${htmlElementId}`);
+        if (imageElement) {
+            imageElement.parentNode.removeChild(imageElement);
+        }
     }
 
     //Progress Bar
@@ -701,15 +786,19 @@ class Grabbable extends Artifact{
         this.entity = null;
         
 
-        // Add the reward(s) to the inventory
+        //Add the reward(s) to the inventory
         if (Array.isArray(this.rewards)) {
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
                 this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
+                //Refresh the UI to show remaining images in inventory 
+                this.artifactSystem.createOrUpdateUIImage(); 
             });
         } else {
-            // If there's only a single reward, add it directly
+            //If there's only a single reward, add it directly
             this.artifactSystem.addToInventory(this.rewards);
+            //Refresh the UI to show remaining images in inventory 
+            this.artifactSystem.createOrUpdateUIImage(); 
         }
 
         //Remove from the array (to not interact with it since it's been collected)
@@ -734,6 +823,7 @@ class Grabbable extends Artifact{
 
         if (this.modelUrl) {
             grabEntity.setAttribute('gltf-model', this.modelUrl);
+            grabEntity.setAttribute('rotation', "0 60 0");
         }else if (this.objModelUrl && this.mtlUrl) {
             // Set the obj-model attribute using the OBJ and MTL files
             grabEntity.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
@@ -823,6 +913,15 @@ class Obstacle extends Artifact{
         if (allItemsPresent) {
             console.log(this.unlockText);
             this.artifactSystem.createOrUpdateUIText(this.unlockText)
+            //update inventory images in camera
+            //Remove images that were required to unlock the artifact from camera (indicates they've been used)
+            this.artifactSystem.removeUsedArtifactImages(this.itemsToUnlock);
+            //Remove reward from inventory (to remove the item and disable UI updates on it)
+            this.artifactSystem.removeFromInventory(this.itemsToUnlock);
+            //Refresh the UI to show remaining images in inventory 
+            this.artifactSystem.createOrUpdateUIImage();
+            //Remove item itself from inventory
+            this.artifactSystem.removeFromInventory(this.itemsToUnlock);
 
             //Executing specific actions based on the obstacle type
             switch (this.htmlElementId) {
@@ -831,12 +930,19 @@ class Obstacle extends Artifact{
                     //update progress bar
                     //this.artifactSystem.updateProgressBar();
                     //Generate circlesXR checkpoint 
+
+                    //update inventory images
+                    //Remove images that were required to unlock the artifact from camera (indicates they've been used)
+                    this.artifactSystem.removeUsedArtifactImages(this.itemsToUnlock);
                     break;
-                case 'sewing machine':
+                case 'sewingMachine':
                     console.log('Giving digit code to players...');
                     //Add digit code to inventory
                     this.artifactSystem.addToInventory(this.reward);
                     console.log(`${this.reward} added to inventory.`);
+                    this.artifactSystem.createOrUpdateUIImage();
+                    //Remove items previously required to unlock the artifact from inventory (since they'r enow used)
+                    this.artifactSystem.removeFromInventory(this.itemsToUnlock); 
                     //Update Progress Bar
                     //this.artifactSystem.updateProgressBar();
                     break;
@@ -888,6 +994,9 @@ class Obstacle extends Artifact{
         
         //Position
         obEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
+        
+        //Id mapping
+        obEntity.setAttribute('id', this.htmlElementId);
         
         //Add click event listener
         obEntity.addEventListener('click', () => {
@@ -1110,6 +1219,22 @@ class Suitcase extends Artifact{
         //Position suitcase
         suitcaseEntity.setAttribute('position', `${this.position.x} ${this.position.y} ${this.position.z}`);
         
+        
+        //Scaling whole object
+        suitcaseEntity.setAttribute('scale', "0.6 0.6 0.6");
+        
+        
+        //Rotating whole object
+        //Apply rotation based on suitcase ID
+        if (this.htmlElementId === 'suitcase-1') {
+            suitcaseEntity.setAttribute('rotation', '0 -68 0'); 
+        } else if (this.htmlElementId === 'suitcase-2') {
+            suitcaseEntity.setAttribute('rotation', '0 68 0'); 
+        } else {
+            //Default rotation
+            suitcaseEntity.setAttribute('rotation', '0 0 0');
+        }
+
         //Add to A-Frame scene
         document.querySelector('a-scene').appendChild(suitcaseEntity);
 
@@ -1224,10 +1349,10 @@ class Suitcase extends Artifact{
             console.log("Suitcase unlocked!");
             this.artifactSystem.createOrUpdateUIText("Suitcase unlocked!")
             
-            //Loop over the rewards array, and add the string into the inventory
+            //Loop over the rewards array, and add the string into the inventory (and display image to camera)
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
-                console.log("Reward Obtained: ", this.rewards);
+                console.log("Reward Obtained: ", this.reward);
                 this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
             });
             // Remove the original entity
@@ -1260,7 +1385,27 @@ class Suitcase extends Artifact{
             unlockedEntity.setAttribute('material', 'color: green'); // Indicate unlocked
         }
         unlockedEntity.setAttribute('position', this.position);
+        //Setting the same ID as the locked entity to maintain reference
+        unlockedEntity.setAttribute('id', this.htmlElementId);
         const scene = document.querySelector('a-scene');
+        
+        //Scaling whole object
+        unlockedEntity.setAttribute('scale', "0.6 0.6 0.6");
+        //Rotating whole object
+        //Apply rotation based on suitcase ID
+        if (this.htmlElementId === 'suitcase-1') {
+            unlockedEntity.setAttribute('rotation', '0 -68 0'); 
+            this.artifactSystem.createOrUpdateUIImage();
+        } else if (this.htmlElementId === 'suitcase-2') {
+            unlockedEntity.setAttribute('rotation', '0 68 0'); 
+            this.artifactSystem.removeImageForArtifact(this.htmlElementId);
+            //Remove coded paper from inventory
+            this.artifactSystem.removeFromInventory(this.itemsToUnlock);
+        } else {
+            //Default rotation
+            unlockedEntity.setAttribute('rotation', '0 0 0');
+        }
+
         scene.appendChild(unlockedEntity);
     }
 
@@ -1421,25 +1566,12 @@ class Clock extends Artifact{
         }
         
         //Generate hands and interaction buttons if interaction is available
-        // Wide Increment Button
-        const clockIncButton = document.createElement('a-entity');
-        clockIncButton.setAttribute('circles-button', `type: box; button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); width: 1.0; height: 0.2; depth: 0.1`);
-        clockIncButton.setAttribute('scale', "1 0.1 1");
-        clockIncButton.setAttribute('rotation', "90 0 0");
-        clockIncButton.setAttribute('position', "0.5 -0.8 0.05"); 
-        clockIncButton.addEventListener('click', () => {
-            this.increment();
-            //Check if Input matches Passcode
-            this.checkUnlock();
-        });
-        clockEntity.appendChild(clockIncButton);
-
-        //Wide Decrement Button
+        // Wide Decrement Button
         const clockDecButton = document.createElement('a-entity');
-        clockDecButton.setAttribute('circles-button', `type: box; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); width: 1.0; height: 0.2; depth: 0.1`);
+        clockDecButton.setAttribute('circles-button', `type: box; button_color: rgb(0,255,0); button_color_hover: rgb(180,255,180); pedestal_color: rgb(255,255,0); width: 1.0; height: 0.2; depth: 0.1`);
         clockDecButton.setAttribute('scale', "1 0.1 1");
         clockDecButton.setAttribute('rotation', "90 0 0");
-        clockDecButton.setAttribute('position', "-0.5 -0.8 0.05"); 
+        clockDecButton.setAttribute('position', "0.5 -0.8 0.05"); 
         clockDecButton.addEventListener('click', () => {
             this.decrement();
             //Check if Input matches Passcode
@@ -1447,13 +1579,26 @@ class Clock extends Artifact{
         });
         clockEntity.appendChild(clockDecButton);
 
+        //Wide Increment Button
+        const clockIncButton = document.createElement('a-entity');
+        clockIncButton.setAttribute('circles-button', `type: box; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); width: 1.0; height: 0.2; depth: 0.1`);
+        clockIncButton.setAttribute('scale', "1 0.1 1");
+        clockIncButton.setAttribute('rotation', "90 0 0");
+        clockIncButton.setAttribute('position', "-0.5 -0.8 0.05"); 
+        clockIncButton.addEventListener('click', () => {
+            this.increment();
+            //Check if Input matches Passcode
+            this.checkUnlock();
+        });
+        clockEntity.appendChild(clockIncButton);
+
         //Select Button Text
         const buttonText = document.createElement('a-text');
         buttonText.setAttribute('value', this.types[this.currentTypeIndex].toUpperCase());
         buttonText.setAttribute('align', 'center');
         buttonText.setAttribute('color', '#000');
         //Position will be set relative to the selectButton later
-        buttonText.setAttribute('position', '0 -0.5 0.06'); 
+        buttonText.setAttribute('position', '0 -0.5 0.3'); 
 
         //Select Button
         const selectButton = document.createElement('a-entity');
@@ -1474,6 +1619,10 @@ class Clock extends Artifact{
 
         this.generateHand(clockEntity, 'hour', this.hourRotation);
         this.generateHand(clockEntity, 'minute', this.minRotation);
+
+        //Scaling whole object
+        clockEntity.setAttribute('scale', "0.3 0.3 0.3");
+        clockEntity.setAttribute('rotation', "0 -26.6 0");
         
         
         //Append the clock entity to the scene in either case
@@ -1488,11 +1637,12 @@ class Clock extends Artifact{
             //Use GLTF model for hands
             clockHand.setAttribute('gltf-model', this.handlesModelUrl);
             //Scale down for the hour hand
-            clockHand.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
+            clockHand.setAttribute('scale', type === 'hour' ? "0.6 0.6 0.6" : "0.8 0.8 0.8");
+            clockHand.setAttribute('position', `0 0.5 0.33`);
         } else if (this.objModelUrl && this.mtlUrl) {
             //Set the obj-model attribute using the OBJ and MTL files
             clockHand.setAttribute('obj-model', `obj: url(${this.objModelUrl}); mtl: url(${this.mtlUrl})`);
-            clockHand.setAttribute('scale', type === 'hour' ? "0.8 0.8 0.8" : "1 1 1");
+            clockHand.setAttribute('scale', type === 'hour' ? "0.4 0.4 0.4" : "0.6 0.6 0.6");
         }else{
             //For height if handle is "hour"-type give short height, otherwise set height to be longer for minute
             clockHand.setAttribute('geometry', {primitive: 'cylinder', height: type === 'hour' ? 0.1 : 0.15, radius: 0.01});
@@ -1503,10 +1653,10 @@ class Clock extends Artifact{
             //Position and Rotations, having minute be pointing rightwards (90 degrees)? initially for easy viewing
             //Afterwards rotation increments/decrements normally
             if (type === 'minute') {
-                clockHand.setAttribute('position', '-0.07 0 0.1');
+                clockHand.setAttribute('position', '-0.07 0.5 0.9');
                 clockHand.setAttribute('rotation', `0 0 ${rotation}`);
             } else {
-                clockHand.setAttribute('position', '0 0.1 0.1');
+                clockHand.setAttribute('position', '0 0.5 0.9');
                 clockHand.setAttribute('rotation', `0 0 ${rotation}`);
             }
         }
@@ -1558,12 +1708,19 @@ class Clock extends Artifact{
         if (unlocked) {
             console.log("Clock unlocked!");
             this.artifactSystem.createOrUpdateUIText("Clock unlocked!")
+            //Remove images that were required to unlock the artifact from camera (in this case coded papers) to indicate they've been used
+            this.artifactSystem.removeImageForArtifact(this.htmlElementId);
+
+            //Remove coded papers from inventory (passing the item name directly since other methods (passing itemsToUnlock list and Rewards list) didn't work)
+            this.artifactSystem.removeFromInventory(['paper']);
+
             
-            //Loop over the rewards array and add the string into the inventory
+            //Loop over the rewards array and add the string into the inventory 
             this.rewards.forEach(reward => {
                 this.artifactSystem.addToInventory(reward);
-                console.log("Reward Obtained: ", this.rewards);
+                console.log("Reward Obtained: ", this.reward);
                 this.artifactSystem.createOrUpdateUIText("Rewards Obtained: " + this.rewards.join(', '));
+                this.artifactSystem.createOrUpdateUIImage();
             });
             
             //Remove the original entity
@@ -1592,6 +1749,11 @@ class Clock extends Artifact{
         //Use GLTF model for the face if available, otherwise create a simple sphere as a placeholder
         if (this.newFaceModelUrl) {
             clockEntity.setAttribute('gltf-model', this.newFaceModelUrl);
+            
+            //Scaling whole object
+            clockEntity.setAttribute('scale', "0.3 0.3 0.3");
+            clockEntity.setAttribute('rotation', "0 -26.6 0");
+            
         } else if (this.newObjModelUrl && this.newMtlUrl) {
             //Set the obj-model attribute using the OBJ and MTL files
             clockEntity.setAttribute('obj-model', `obj: url(${this.newObjModelUrl}); mtl: url(${this.newMtlUrl})`);
