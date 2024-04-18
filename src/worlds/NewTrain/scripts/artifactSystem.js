@@ -383,7 +383,7 @@ export class ArtifactSystem {
         artifactEntity.setAttribute('circles-artefact', 
         `inspectPosition:0 0 0; inspectRotation:0 0 0; inspectScale:0.8 0.8 0.8;
         textRotationY:90.0; labelLookAt:true; descriptionLookAt:true; label_offset:0.0 1.0 0.0; arrow_position:down;
-        title:${data.title}; description:${data.description}; label_text:${data.label_text}; audio: ${data.audio};
+        title:${data.title}; description:${data.description}; label_text:${data.label_text}; audio:${data.audio};
         volume: ${data.volume};`);
 
         //Additional circlesXR interactions or components
