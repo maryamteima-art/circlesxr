@@ -23,6 +23,9 @@ export class ArtifactSystem {
         this.unlockedArtifacts = 0; 
         this.initializeProgressBar();
 
+        //Checkpoints
+        //this.initializeCheckpoints();
+
         //Camera UI Elements
         //Specific maps of images to solo items like teh clock and suitcases
         //for elements like suitcases and clocks, there are pieces of paper that reveal codes.
@@ -61,7 +64,10 @@ export class ArtifactSystem {
           material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
           title: '1940s Filtering Process',
           description: 'In the 1940s, milk filtration was primarily a mechanical process, using cloth filters to remove impurities. Pasteurization, heating milk to at least 145°F (62.8°C) for 30 minutes or 161°F (71.7°C) for 15 seconds, was a common method to kill harmful bacteria',
-          label_text: '1940s Milk'
+          label_text: '1940s Milk',
+          //Audio file path
+          audio: 'Milk', 
+          volume: 1.0
         },
         {
             type: 'view-only',
@@ -76,7 +82,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Air Transport 1930s',
             description: 'Douglas DC-3, introduced in the 1930s, revolutionized air transport with its efficiency and reliability, making commercial air travel more accessible. Other civilian aircraft of the era include the Ford Trimotor and the Boeing 247, which contributed to the development of commercial aviation',
-            label_text: 'Air Transport 1930s'
+            label_text: 'Air Transport 1930s',
+            //Audio file path
+            audio: 'AirTransport', 
+            volume: 1.0
           },
           ,
         {
@@ -92,7 +101,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Quartz Clock in 1927',
             description: 'The development of the first quartz clock was in 1927 by the Canadian Engineers Warren Marrison and J.W. Horton at Bell Telephone Laboratories. A pivotal moment in timekeeping, as quartz clocks were far more accurate than mechanical clocks',
-            label_text: 'Quartz Clock'
+            label_text: 'Quartz Clock',
+            //Audio file path
+            audio: 'QuartzClock', 
+            volume: 1.0
           },
         {
             type: 'view-only',
@@ -107,7 +119,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: '1920s Rayon Fabric',
             description: 'In 1894, British inventors, Charles Cross, Edward Bevan, and Clayton Beadle, patented the first, safe production of artificial silk, named Viscose Rayon, composed of chemically processed cellulose. "Avtex Fibers Incorporated" first commercially produced Rayon in 1910 in the United States',
-            label_text: 'Rayon Fabric'
+            label_text: 'Rayon Fabric',
+            //Audio file path
+            audio: 'Rayon', 
+            volume: 1.0
           },
         {
             type: 'view-only',
@@ -122,7 +137,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'The Mallard 4468',
             description: 'On 3 July 1938, Mallard broke the world speed record for steam locomotives at 126 mph (203 km/h), which still stands today. This A4 class locomotive was designed by the British railway Engineer Sir Nigel Gresley',
-            label_text: 'The Mallard Train'
+            label_text: 'The Mallard Train',
+            //Audio file path
+            audio: 'TheMallard', 
+            volume: 1.0
           },
         {
             type: 'view-only',
@@ -137,7 +155,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'First Espresso Machine',
             description: 'The invention of the espresso machine was by the Italian inventor Angelo Moriondo in 1884. Further improvements by Luigi Bezerra, Desiderio Pavoni and Achille Gaggia in 1904-1940s introduced the high-pressure extraction that defines espresso today',
-            label_text: 'Espresso Machine'
+            label_text: 'Espresso Machine',
+            //Audio file path
+            audio: 'EspressoMachine', 
+            volume: 1.0
           },
           {
               type: 'view-only',
@@ -152,7 +173,10 @@ export class ArtifactSystem {
               material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
               title: 'Sewing in 1940s',
               description: 'Early sewing machines in the 1940s typically had between 1 to 2 gears for basic stitching functions. These machines were constructed from cast iron or steel, making them last well over 70 years but weighing 30-40 Ibs. The use of aluminum became more common in later models to reduce weight',
-              label_text: 'Sewing Machine'
+              label_text: 'Sewing Machine',
+              //Audio file path
+              audio: 'SewingMachine', 
+              volume: 1.0
             },
         {
             type: 'view-only',
@@ -167,7 +191,10 @@ export class ArtifactSystem {
             material: 'color:yellow; emissive:orange; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             title: 'Suitcases in 1940s',
             description: 'Suitcases began to transition from heavy trunks and wooden boxes into portable designs using fiberboard and plywood. Later incorporating synthetic materials in 1950s, like vinyl and nylon, for lighter, more durable, and water-resistant luggage marked a significant shift for train travel in Canada',
-            label_text: '1940-1950s Luggage'
+            label_text: '1940-1950s Luggage',
+            //Audio file path
+            audio: 'Luggage', 
+            volume: 1.0
           },
           {
             type: 'suitcase',
@@ -356,7 +383,8 @@ export class ArtifactSystem {
         artifactEntity.setAttribute('circles-artefact', 
         `inspectPosition:0 0 0; inspectRotation:0 0 0; inspectScale:0.8 0.8 0.8;
         textRotationY:90.0; labelLookAt:true; descriptionLookAt:true; label_offset:0.0 1.0 0.0; arrow_position:down;
-        title:${data.title}; description:${data.description}; label_text:${data.label_text};`);
+        title:${data.title}; description:${data.description}; label_text:${data.label_text}; audio: #${data.audio};
+        volume: ${data.volume};`);
 
         //Additional circlesXR interactions or components
         artifactEntity.setAttribute('circles-pickup-object', 'animate:true;');
@@ -689,6 +717,47 @@ export class ArtifactSystem {
         this.progressBarImage.setAttribute('src', imageName);
     }
 
+    //Generates a teleport checkpoint entity when a condition is met (in this case when door is unlocked)
+    createTeleportCheckpoint(position, targetPosition) {
+        const checkpoint = document.createElement('a-entity');
+        checkpoint.setAttribute('geometry', 'primitive: cylinder; height: 0.05; radius: 0.1');
+        //Dark brown
+        checkpoint.setAttribute('material', 'color: rgb(102, 44, 9); side: double; emissive: orange; emissiveIntensity: 0.5');
+        checkpoint.setAttribute('position', position);
+        checkpoint.setAttribute('rotation', '-90 0 0');
+
+        //Adding circlesXR highlights/hover effects to indicate clickability
+        checkpoint.setAttribute('circles-interactive-object', 'type: highlight; highlight_color: rgb(255, 255, 0); hover_scale: 1.1; click_scale: 1.2; enabled: true');
+
+
+        checkpoint.addEventListener('click', () => {
+            // Teleport the player to the target position
+            const playerEntity = document.querySelector('[camera]');
+            playerEntity.setAttribute('position', targetPosition);
+            console.log('Teleported to:', targetPosition);
+        });
+    
+        const scene = document.querySelector('a-scene');
+        scene.appendChild(checkpoint);
+        //return checkpoint;
+    }
+    //Initialize permanent checkpoints (for baggage and cafe)
+    initializeCheckpoints() {
+
+        //From Seating to Cafe (done when unlocking door via door's switch statement) -->
+        //this.createTeleportCheckpoint('0.95 0.327 -21.88', '0.018 1.6 -26.13');
+        //From cafe to Seating <--
+        this.createTeleportCheckpoint('0.95 0.327 -25.88', '0.018 1.6 -10.13');
+
+        //From Cafe to Baggage  -->
+        this.createTeleportCheckpoint('0.95 0.327 -64.83', '0.018 1.6 -60.13');  
+        //From Baggage to Cafe <-- (just flip the last digits)
+        this.createTeleportCheckpoint('0.95 0.327 -66.83', '0.018 1.6 -50.13');  
+
+        //Add more when needed here
+
+    }
+
     
 }
 
@@ -928,6 +997,7 @@ class Obstacle extends Artifact{
                     //update progress bar
                     this.artifactSystem.updateProgressBar();
                     //Generate circlesXR checkpoint 
+                    //this.createTeleportCheckpoint('0.95 0.327 -21.88', '0.018 1.6 -26.13');
 
                     //update inventory images
                     //Remove images that were required to unlock the artifact from camera (indicates they've been used)

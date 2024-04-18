@@ -82,7 +82,7 @@ export class GameSystem {
     startTimer() {
         //300 seconds is 5min
         //3599 is 59min and 59sec
-        this.gameTime = 3599; 
+        this.gameTime = 300; 
         this.timerInterval = setInterval(() => {
             this.gameTime--;
             console.log("Timer:", this.gameTime);
@@ -106,16 +106,31 @@ export class GameSystem {
         if (this.artifactSystem.playerInventory['necklace'] && this.gameTime > 0) {
             console.log("Congratulations! You have won the game.");
             this.win = true;
-            this.uiSystem.showWinOverlay();
+            //Save the Score (elapsed time) & Showcase the Win Screen
+            const elapsedTime = 3599 - this.gameTime;
+            this.uiSystem.showWinOverlay(elapsedTime); 
         } else {
             console.log("Game Over. You didn't find the necklace in time");
             this.win = false;
-            this.uiSystem.showGameOverOverlay();
+            this.uiSystem.showGameOverOverlay(elapsedTime);
         }
         //Mark game as over
         this.gameOver = true;
-        // Proceed to handle the end of the game
-        this.endGame();
+    }
+    //LeaderBoards
+    //Saves time to localStorage
+    saveScore(score) {
+        const scores = this.getScores();
+        scores.push(score);
+        scores.sort((a, b) => a - b); // Sort scores in ascending order
+        if (scores.length > 10) scores.length = 10; // Keep only the top 10 scores to save space
+        localStorage.setItem('gameScores', JSON.stringify(scores));
+    }
+    
+    //Method for other functions to get the score array
+    getScores() {
+        const scores = localStorage.getItem('gameScores');
+        return scores ? JSON.parse(scores) : [];
     }
     
 }

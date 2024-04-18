@@ -32,54 +32,57 @@ export class UISystem {
     }
 
     //Create and show the game over overlay
-    showGameOverOverlay() {
-        const overlay = this.createPlane('Game Over');
+    showGameOverOverlay(elapsedTime) {
+        //Buttons
+        //const overlay = this.createPlaneWithoutTitle('images/lose.png');
+        const overlay = this.createModelOverlay('models/LoseNecklace.glb');
         const retryButton = this.createButtonWithText("Retry", "red", "blue");
         overlay.appendChild(retryButton);
+
+        //Score
+        //Get player's score from gameSystem
+        const scores = this.gameSystem.getScores();
+        //Create a listed leaderboards tier and place into a text entity
+        const scoresText = this.createScoresText(scores, elapsedTime);
+        overlay.appendChild(scoresText);
+
+        //Attach overlay (A-image, button + Score text) to camera
         this.cameraEntity.appendChild(overlay);
     }
 
     //Create and show the win overlay
-    showWinOverlay() {
-        const overlay = this.createPlane('You Win!');
+    showWinOverlay(elapsedTime) {
+        //Button
+        //const overlay = this.createPlaneWithoutTitle('images/win.png');
+        const overlay = this.createModelOverlay('models/WinNecklace.glb');
         const playAgainButton = this.createButtonWithText("Play Again", "green", "blue");
         overlay.appendChild(playAgainButton);
+
+        //Score
+        //Get player's score from gameSystem
+        const scores = this.gameSystem.getScores();
+        //Create a listed leaderboards tier and place into a text entity
+        const scoresText = this.createScoresText(scores, elapsedTime);
+        overlay.appendChild(scoresText);
+
+        //Attach overlay (A-image, button + Score text) to camera
         this.cameraEntity.appendChild(overlay);
     }
 
-    //Creates UI overlay
-    //Null url by default
-    createPlane(title, gltfModelUrl = null) {
-        const planeEntity = document.createElement('a-entity');
+    //Generates a 3D model to acts as the backdrop in front of the leaderboard stats & replay buttons
+    createModelOverlay(modelUrl) {
+        const modelEntity = document.createElement('a-entity');
+        modelEntity.setAttribute('gltf-model', modelUrl);
+        //Scale
+        modelEntity.setAttribute('scale', '1 1 1'); 
+        //Position
+        modelEntity.setAttribute('position', '0 0 -3');  
+        //Rotation
+        modelEntity.setAttribute('rotation', '0 0 0'); 
     
-        if (gltfModelUrl) {
-            //Use the GLTF model if a URL is provided
-            planeEntity.setAttribute('gltf-model', gltfModelUrl);
-        } else {
-            //Create placeholder plane geometry
-            planeEntity.setAttribute('geometry', 'primitive: plane; width: 6; height: 4');
-            //white
-            planeEntity.setAttribute('material', 'color: #FFF'); 
-            planeEntity.setAttribute('position', '0 0 -3');
-            planeEntity.setAttribute('rotation', '0 0 0');
-        }
+        this.cameraEntity.appendChild(modelEntity);
     
-
-        //Create a text entity for the title
-        const titleText = document.createElement('a-text');
-        titleText.setAttribute('value', title);
-        //Black text color
-        titleText.setAttribute('color', '#000'); 
-        titleText.setAttribute('align', 'center');
-        //Position the title above the plane
-        titleText.setAttribute('position', '0 1.1 0.01'); 
-        //Match the width of the plane
-        titleText.setAttribute('width', 4); 
-
-        //Append the title text to the plane entity
-        planeEntity.appendChild(titleText);
-    
-        return planeEntity;
+        return modelEntity;
     }
 
     //Generates a circlesXR button with Text-Title above it
@@ -91,7 +94,7 @@ export class UISystem {
 
         //CirclesXR button from inputs
         button.setAttribute('circles-button', `type: box; button_color: ${color}; button_color_hover: ${hoverColor}; pedestal_color: rgb(255, 255, 255); width: 1; height: 0.2; depth: 0.1`);
-        button.setAttribute('position', '0 -0.5 0');
+        button.setAttribute('position', '0 -0.65 0');
         button.setAttribute('rotation', '90 0 0');
 
         //When the button is clicked, call buttonAction with the button's text as the identifier
@@ -103,15 +106,39 @@ export class UISystem {
         //Text
         const textEntity = document.createElement('a-text');
         textEntity.setAttribute('value', text);
-        textEntity.setAttribute('color', '#000');
+        textEntity.setAttribute('color', '#FFFFFF');
         textEntity.setAttribute('align', 'center');
-        textEntity.setAttribute('position', '0 -0.1 0.05');
+        textEntity.setAttribute('position', '0 -0.17 0.7');
         textEntity.setAttribute('width', 4);
 
         //Append Text to Parent
         buttonGroup.appendChild(textEntity);
 
         return buttonGroup;
+    }
+
+    //Creates a listed leaderboards tier and places it into a text entity
+    createScoresText(scores, elapsedTime) {
+        
+        const scoresText = document.createElement('a-text');
+        scoresText.setAttribute('position', '-1 2 0'); 
+        scoresText.setAttribute('color', 'white');
+        scoresText.setAttribute('width', 4);
+
+        // Add player's current score at the top
+        let displayText = `Your Score: ${elapsedTime} seconds\nLeaderboard:\n`;
+        if (scores.length === 0) {
+            //Placeholder if no scores (just dashes)
+            displayText += "- - -\n"; 
+        } else {
+            scores.slice(0, 3).forEach((score, index) => {
+                //Create 1., 2., 3. from indices (within new lines) and attach their repsective scores
+                displayText += `${index + 1}. ${score} seconds\n`;
+            });
+        }
+
+        scoresText.setAttribute('value', displayText);
+        return scoresText;
     }
 
     //Button text is the identifier
