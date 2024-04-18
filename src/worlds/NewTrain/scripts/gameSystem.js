@@ -82,7 +82,7 @@ export class GameSystem {
     startTimer() {
         //300 seconds is 5min
         //3599 is 59min and 59sec
-        this.gameTime = 300; 
+        this.gameTime = 3599; 
         this.timerInterval = setInterval(() => {
             this.gameTime--;
             console.log("Timer:", this.gameTime);
