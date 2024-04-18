@@ -66,7 +66,7 @@ export class ArtifactSystem {
           description: 'In the 1940s, milk filtration was primarily a mechanical process, using cloth filters to remove impurities. Pasteurization, heating milk to at least 145°F (62.8°C) for 30 minutes or 161°F (71.7°C) for 15 seconds, was a common method to kill harmful bacteria',
           label_text: '1940s Milk',
           //Audio file path
-          audio: 'Milk', 
+          audio: "cards/Milk.mp3", 
           volume: 1.0
         },
         {
@@ -84,7 +84,7 @@ export class ArtifactSystem {
             description: 'Douglas DC-3, introduced in the 1930s, revolutionized air transport with its efficiency and reliability, making commercial air travel more accessible. Other civilian aircraft of the era include the Ford Trimotor and the Boeing 247, which contributed to the development of commercial aviation',
             label_text: 'Air Transport 1930s',
             //Audio file path
-            audio: 'AirTransport', 
+            audio: "cards/AirTransport.mp3", 
             volume: 1.0
           },
           ,
@@ -103,7 +103,7 @@ export class ArtifactSystem {
             description: 'The development of the first quartz clock was in 1927 by the Canadian Engineers Warren Marrison and J.W. Horton at Bell Telephone Laboratories. A pivotal moment in timekeeping, as quartz clocks were far more accurate than mechanical clocks',
             label_text: 'Quartz Clock',
             //Audio file path
-            audio: 'QuartzClock', 
+            audio: "cards/QuartzClock.mp3", 
             volume: 1.0
           },
         {
@@ -121,12 +121,12 @@ export class ArtifactSystem {
             description: 'In 1894, British inventors, Charles Cross, Edward Bevan, and Clayton Beadle, patented the first, safe production of artificial silk, named Viscose Rayon, composed of chemically processed cellulose. "Avtex Fibers Incorporated" first commercially produced Rayon in 1910 in the United States',
             label_text: 'Rayon Fabric',
             //Audio file path
-            audio: 'Rayon', 
+            audio: "cards/Rayon.mp3", 
             volume: 1.0
           },
         {
             type: 'view-only',
-            position: '-6.18 1.4 -12.26',
+            position: '-4.442 1.721 -1.975',
             rotation: '0 45 0',
             scale: '1 1 1',
             //Remove geometry and material when importing gltf and unhide the URL below
@@ -139,7 +139,7 @@ export class ArtifactSystem {
             description: 'On 3 July 1938, Mallard broke the world speed record for steam locomotives at 126 mph (203 km/h), which still stands today. This A4 class locomotive was designed by the British railway Engineer Sir Nigel Gresley',
             label_text: 'The Mallard Train',
             //Audio file path
-            audio: 'TheMallard', 
+            audio: "cards/TheMallard.mp3", 
             volume: 1.0
           },
         {
@@ -157,7 +157,7 @@ export class ArtifactSystem {
             description: 'The invention of the espresso machine was by the Italian inventor Angelo Moriondo in 1884. Further improvements by Luigi Bezerra, Desiderio Pavoni and Achille Gaggia in 1904-1940s introduced the high-pressure extraction that defines espresso today',
             label_text: 'Espresso Machine',
             //Audio file path
-            audio: 'EspressoMachine', 
+            audio: "cards/EspressoMachine.mp3", 
             volume: 1.0
           },
           {
@@ -175,7 +175,7 @@ export class ArtifactSystem {
               description: 'Early sewing machines in the 1940s typically had between 1 to 2 gears for basic stitching functions. These machines were constructed from cast iron or steel, making them last well over 70 years but weighing 30-40 Ibs. The use of aluminum became more common in later models to reduce weight',
               label_text: 'Sewing Machine',
               //Audio file path
-              audio: 'SewingMachine', 
+              audio: "cards/SewingMachine.mp3", 
               volume: 1.0
             },
         {
@@ -193,7 +193,7 @@ export class ArtifactSystem {
             description: 'Suitcases began to transition from heavy trunks and wooden boxes into portable designs using fiberboard and plywood. Later incorporating synthetic materials in 1950s, like vinyl and nylon, for lighter, more durable, and water-resistant luggage marked a significant shift for train travel in Canada',
             label_text: '1940-1950s Luggage',
             //Audio file path
-            audio: 'Luggage', 
+            audio: "cards/Luggage.mp3", 
             volume: 1.0
           },
           {
@@ -383,7 +383,7 @@ export class ArtifactSystem {
         artifactEntity.setAttribute('circles-artefact', 
         `inspectPosition:0 0 0; inspectRotation:0 0 0; inspectScale:0.8 0.8 0.8;
         textRotationY:90.0; labelLookAt:true; descriptionLookAt:true; label_offset:0.0 1.0 0.0; arrow_position:down;
-        title:${data.title}; description:${data.description}; label_text:${data.label_text}; audio: #${data.audio};
+        title:${data.title}; description:${data.description}; label_text:${data.label_text}; audio: ${data.audio};
         volume: ${data.volume};`);
 
         //Additional circlesXR interactions or components
