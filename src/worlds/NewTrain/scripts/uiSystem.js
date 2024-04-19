@@ -181,7 +181,7 @@ export class UISystem {
         //Shortening buttons (they were too tall by default)
         prevButton.setAttribute('scale', "4 0.1 4");
         prevButton.setAttribute('rotation', `90 0 0`);
-        prevButton.setAttribute('position', "1.32 2.645 17.344"); 
+        prevButton.setAttribute('position', "-2.540 2.645 17.344"); 
         //IF CLICK
         prevButton.addEventListener('click', () => {
             this.showPrevCutscene();
@@ -193,7 +193,7 @@ export class UISystem {
         //Shortening buttons (they were too tall by default)
         nextButton.setAttribute('scale', "4 0.1 4");
         nextButton.setAttribute('rotation', `90 0 0`);
-        nextButton.setAttribute('position', "1.32 1.5 17.344"); 
+        nextButton.setAttribute('position', "-2.540 1.5 17.344"); 
         //IF CLICK
         nextButton.addEventListener('click', () => {
             this.showNextCutscene();
