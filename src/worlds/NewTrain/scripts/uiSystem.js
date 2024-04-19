@@ -5,47 +5,31 @@ export class UISystem {
         //Reference to the A-Frame camera entity for attaching UI elements
         this.cameraEntity = CIRCLES.getMainCameraElement();
         
-        //Cutscenes Array
-        //Placeholder planes will be used if no gltf model is provided
-        this.cutscenes = [
-            {gltfModelUrl: null, placeholderColor: 'red' },
-            {gltfModelUrl: null, placeholderColor: 'green' },
-            //If no GLTF model, use null and specify a placeholder color
-            {gltfModelUrl: null, placeholderColor: 'blue' }
-        ];
-        //Tracking the current cutscene being displayed (for next and prev buttons)
-        this.currentCutsceneIndex = 0; 
-    }
+        //Index to track current cutscene
+        this.currentCutsceneIndex = 0;
+        // Array of cutscene image paths
+        this.cutscenes = ['images/scene1.png', 'images/scene2.png', 'images/scene3.png', 'images/scene4.png'];
+        // Total number of cutscenes available
+        this.totalCutscenes = this.cutscenes.length;
 
-    initializeCutscenes() {
-        // Show the first cutscene on game start
-        this.showCutscene();
-        //Add buttons
-        const startGameButton = this.createButtonWithText("Start Game", "green", "lightgreen", () => this.buttonAction("Start Game"));
-        this.cameraEntity.appendChild(startGameButton);
-        
-        const nextButton = this.createButtonWithText("Next", "green", "lightgreen", () => this.buttonAction("Next"));
-        this.cameraEntity.appendChild(nextButton);
-        
-        const prevButton = this.createButtonWithText("Previous", "green", "lightgreen", () => this.buttonAction("Prev"));
-        this.cameraEntity.appendChild(prevButton);
+        // Initialize buttons and image
+        this.initializeCutsceneUI();
     }
 
     //Create and show the game over overlay
     showGameOverOverlay(elapsedTime) {
         //Buttons
         //const overlay = this.createPlaneWithoutTitle('images/lose.png');
-        const overlay = this.createModelOverlay('models/LoseNecklace.glb');
+        const overlay = this.createModelOverlay('compressed/LoseNecklace.glb');
         const retryButton = this.createButtonWithText("Retry", "red", "blue");
         overlay.appendChild(retryButton);
 
-        //Score
+        //Score 
         //Get player's score from gameSystem
         const scores = this.gameSystem.getScores();
         //Create a listed leaderboards tier and place into a text entity
         const scoresText = this.createScoresText(scores, elapsedTime);
         overlay.appendChild(scoresText);
-
         //Attach overlay (A-image, button + Score text) to camera
         this.cameraEntity.appendChild(overlay);
     }
@@ -54,7 +38,7 @@ export class UISystem {
     showWinOverlay(elapsedTime) {
         //Button
         //const overlay = this.createPlaneWithoutTitle('images/win.png');
-        const overlay = this.createModelOverlay('models/WinNecklace.glb');
+        const overlay = this.createModelOverlay('compressed/WinNecklace.glb');
         const playAgainButton = this.createButtonWithText("Play Again", "green", "blue");
         overlay.appendChild(playAgainButton);
 
@@ -162,49 +146,85 @@ export class UISystem {
                 this.showPrevCutscene();
                 break;
             case 'Retry':
+                // Reload the game
+                location.reload();
+                break;
             case 'Play Again':
                 // Reload the game
                 location.reload();
+                break;
+            case 'Start Game':
+                console.log('Starting game...');
+                this.startGame();
+                break;
+            case 'Next':
+                this.showNextCutscene();
+                break;
+            case 'Prev':
+                this.showPrevCutscene();
                 break;
             default:
                 console.log('No action defined for this button.');
                 break;
         }
     }
-    
-    //Displays Current Cutscene
-    //Imports either a gltf model if provided, or a placeholder plane
-    showCutscene() {
-        const cutscene = this.cutscenes[this.currentCutsceneIndex];
-        const overlay = this.createPlane(cutscene.gltfModelUrl || cutscene.placeholderColor);
-        this.cameraEntity.appendChild(overlay);
+
+    initializeCutsceneUI() {
+        //Locate the image entity
+        this.cutsceneImage = document.getElementById('cutsceneImage');
+        //Locate scene
+        const scene = document.querySelector('a-scene');
+
+        //Initialize buttons with click listeners
+        const prevButton = document.createElement('a-entity');
+        prevButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
+        //Shortening buttons (they were too tall by default)
+        prevButton.setAttribute('scale', "4 0.1 4");
+        prevButton.setAttribute('rotation', `90 0 0`);
+        prevButton.setAttribute('position', "1.32 2.645 17.344"); 
+        //IF CLICK
+        prevButton.addEventListener('click', () => {
+            this.showNextCutscene();
+        });
+
+        //Initialize buttons with click listeners
+        const nextButton = document.createElement('a-entity');
+        nextButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(0,255,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
+        //Shortening buttons (they were too tall by default)
+        nextButton.setAttribute('scale', "4 0.1 4");
+        nextButton.setAttribute('rotation', `90 0 0`);
+        nextButton.setAttribute('position', "1.32 1.5 17.344"); 
+        //IF CLICK
+        nextButton.addEventListener('click', () => {
+            this.showPrevCutscene();
+        });
+
+        scene.appendChild(nextButton);
+        scene.appendChild(prevButton);
+        
     }
-    
-    //Incrementing the current cutscene index with wrapping around (moves to first cutscene when reaching the end) 
+
     showNextCutscene() {
-        this.currentCutsceneIndex = (this.currentCutsceneIndex + 1) % this.cutscenes.length;
-        this.updateCutsceneDisplay();
+        // Increment index and wrap around using modulo
+        this.currentCutsceneIndex = (this.currentCutsceneIndex + 1) % this.totalCutscenes;
+        this.updateCutsceneImage();
     }
-    
-    //Decrementing the current cutscene index with wrapping around (moves to last cutscene when reaching the first)
+
     showPrevCutscene() {
-        this.currentCutsceneIndex = (this.currentCutsceneIndex - 1 + this.cutscenes.length) % this.cutscenes.length;
-        this.updateCutsceneDisplay();
-    }
-    
-    //Clears previous gltf or plane, and loads the new one
-    updateCutsceneDisplay() {
-        //Clear existing cutscene UI
-        //Each cutscene UI component is added directly to `this.cameraEntity`, hence removing child from camera
-        while (this.cameraEntity.firstChild) {
-            this.cameraEntity.removeChild(this.cameraEntity.firstChild);
+        // Decrement index and wrap around if it goes below 0
+        if (this.currentCutsceneIndex === 0) {
+            this.currentCutsceneIndex = this.totalCutscenes - 1;
+        } else {
+            this.currentCutsceneIndex -= 1;
         }
-        
-        //Show the new cutscene based on the current index
-        this.showCutscene();
-        
-        //Optionally, update "Next" and "Prev" button states if needed
+        this.updateCutsceneImage();
     }
+
+    updateCutsceneImage() {
+        // Update the source of the cutscene image
+        this.cutsceneImage.setAttribute('src', this.cutscenes[this.currentCutsceneIndex]);
+    }
+
 
     //Showcases Timer
     // This method updates or creates a timer text entity in the scene

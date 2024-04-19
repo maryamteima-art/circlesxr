@@ -205,7 +205,7 @@ export class ArtifactSystem {
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             //Use null if not using a GLTF model
             //CHANGE MODEL TO HAVE NO HANDLES TEXTURE 
-            modelUrl: "models/ClosedSuitcase.glb",
+            modelUrl: "compressed/ClosedSuitcase.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
@@ -213,7 +213,7 @@ export class ArtifactSystem {
             //Rewards/items collected when unlocking the suitcase
             rewards:["paper"],
             //newEntity/unlock
-            newModelUrl:"models/OpenSuitcase.glb",
+            newModelUrl:"compressed/OpenSuitcase.glb",
             newObjModelUrl:null, 
             newMtlUrl:null
           },
@@ -225,14 +225,14 @@ export class ArtifactSystem {
             geometry: 'primitive:cube;',
             material: 'color:#B2790F; emissive:green; emissiveIntensity:0.7; metalness:0.3; roughness:0.8;',
             //Use null if not using a GLTF model
-            modelUrl: "models/ClosedSuitcase.glb",
+            modelUrl: "compressed/ClosedSuitcase.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //passcode, will be compared with user inputs, if match then the suitcase unlocks
             passcode: [6,1,5,8],
             rewards:["necklace"],
             //new entity/unlock
-            newModelUrl: "models/OpenSuitcase.glb",
+            newModelUrl: "compressed/OpenSuitcase.glb",
             newObjModelUrl:null, 
             newMtlUrl:null 
           },
@@ -248,9 +248,9 @@ export class ArtifactSystem {
             lockText: 'Locked! Missing Component!',
             unlockText: 'Interaction Available!',
             itemsToUnlock: [""],
-            faceModelUrl: "models/Clock.glb", 
-            handlesModelUrl: "models/Handles.glb",
-            newFaceModelUrl:"models/ClockOpen.glb",
+            faceModelUrl: "compressed/Clock.glb", 
+            handlesModelUrl: "compressed/Handles.glb",
+            newFaceModelUrl:"compressed/ClockOpen.glb",
             //handles
             objModelUrl:null, 
             mtlUrl:null, 
@@ -266,7 +266,7 @@ export class ArtifactSystem {
             position: '-2.4 -0.429 -12.54',
             htmlElementId: '1',
             //Use null if not using a GLTF model
-            modelUrl: "models/Coupon.glb",
+            modelUrl: "compressed/Coupon.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected 
@@ -278,7 +278,7 @@ export class ArtifactSystem {
             position: '3 -0.45 0.8',
             htmlElementId: '2',
             ////Use null if not using a GLTF model
-            modelUrl: "models/Fabric.glb",
+            modelUrl: "compressed/Fabric.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected 
@@ -291,7 +291,7 @@ export class ArtifactSystem {
             position: '-3.46 0.319 -69.81',
             htmlElementId: 'sewingMachine',
             ////Use null if not using a GLTF model
-            modelUrl: "models/SewingMachine.glb",
+            modelUrl: "compressed/SewingMachine.glb",
             objModelUrl:null, 
             mtlUrl:null,
             //Rewards/items collected when unlocking the suitcase

@@ -31,7 +31,8 @@ export class GameSystem {
         this.controllerSystem.handleInput();
         console.log("Game initialized and ready");
         //Setup cutscene
-        //this.uiSystem.initializeCutscenes();
+        this.uiSystem.initializeCutsceneUI();
+        //Timer
         this.startTimer();
     }
 
@@ -112,6 +113,7 @@ export class GameSystem {
         } else {
             console.log("Game Over. You didn't find the necklace in time");
             this.win = false;
+            const elapsedTime = 0;
             this.uiSystem.showGameOverOverlay(elapsedTime);
         }
         //Mark game as over
