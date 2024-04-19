@@ -179,7 +179,7 @@ export class UISystem {
         const prevButton = document.createElement('a-entity');
         prevButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
         //Shortening buttons (they were too tall by default)
-        prevButton.setAttribute('scale', "4 0.1 4");
+        prevButton.setAttribute('scale', "4 10 4");
         prevButton.setAttribute('rotation', `90 0 0`);
         prevButton.setAttribute('position', "-2.540 2.645 17.344"); 
         //IF CLICK
@@ -191,7 +191,7 @@ export class UISystem {
         const nextButton = document.createElement('a-entity');
         nextButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(0,255,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
         //Shortening buttons (they were too tall by default)
-        nextButton.setAttribute('scale', "4 0.1 4");
+        nextButton.setAttribute('scale', "4 10 4");
         nextButton.setAttribute('rotation', `90 0 0`);
         nextButton.setAttribute('position', "-2.540 1.5 17.344"); 
         //IF CLICK
