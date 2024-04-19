@@ -37,6 +37,16 @@
       <audio id="SewingMachine" src="cards/SewingMachine.mp3"></audio>
       <audio id="Luggage" src="cards/Luggage.mp3"></audio>
 
+      <!--TRAIN ROOM-->
+      <a-asset-item id="train" src="compressed/Train.glb"></a-asset-item>
+
+      <!--OTHER INTERACTIVE MODELS-->
+      <a-asset-item id="suitcaseOpen" src="compressed/OpenSuitcase.glb"></a-asset-item>
+      <a-asset-item id="winNecklace" src="compressed/WinNecklace.glb"></a-asset-item>
+      <a-asset-item id="loseNecklace" src="compressed/LoseNecklace.glb"></a-asset-item>
+      <a-asset-item id="clockOpen" src="compressed/ClockOpen.glb"></a-asset-item>
+
+
       <!--BG-->
       <a-entity circles-sound="type:music; src:audios/Bg.mp3; autoplay:true; loop:true; volume:1;"></a-entity>
       <circles-assets/>
@@ -56,7 +66,7 @@
     <a-entity id="navmesh1" geometry="primitive: plane" visible='false' rotation="-90 -90 0" scale= "  127.33 10.14 0 "position = "0 0  -46.714" nav-mesh></a-entity>
 
     <!-- TRAIN GLTF/GLB SETTING -->
-    <a-entity id = "train" gltf-model="compressed/Train.glb"></a-entity>
+    <a-entity gltf-model="#train"></a-entity>
 
     <!--OBSERVATIONAL/STATIC PIECES-->
 

@@ -213,7 +213,7 @@ export class ArtifactSystem {
             //Rewards/items collected when unlocking the suitcase
             rewards:["paper"],
             //newEntity/unlock
-            newModelUrl:"compressed/OpenSuitcase.glb",
+            newModelUrl:"#suitcaseOpen",
             newObjModelUrl:null, 
             newMtlUrl:null
           },
@@ -232,7 +232,7 @@ export class ArtifactSystem {
             passcode: [6,1,5,8],
             rewards:["necklace"],
             //new entity/unlock
-            newModelUrl: "compressed/OpenSuitcase.glb",
+            newModelUrl: "#suitcaseOpen",
             newObjModelUrl:null, 
             newMtlUrl:null 
           },
@@ -250,7 +250,7 @@ export class ArtifactSystem {
             itemsToUnlock: [""],
             faceModelUrl: "compressed/Clock.glb", 
             handlesModelUrl: "compressed/Handles.glb",
-            newFaceModelUrl:"compressed/ClockOpen.glb",
+            newFaceModelUrl:"#clockOpen",
             //handles
             objModelUrl:null, 
             mtlUrl:null, 

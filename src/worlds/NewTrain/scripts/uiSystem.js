@@ -20,7 +20,7 @@ export class UISystem {
     showGameOverOverlay(elapsedTime) {
         //Buttons
         //const overlay = this.createPlaneWithoutTitle('images/lose.png');
-        const overlay = this.createModelOverlay('compressed/LoseNecklace.glb');
+        const overlay = this.createModelOverlay('#loseNecklace');
         const retryButton = this.createButtonWithText("Retry", "red", "blue");
         overlay.appendChild(retryButton);
 
@@ -38,7 +38,7 @@ export class UISystem {
     showWinOverlay(elapsedTime) {
         //Button
         //const overlay = this.createPlaneWithoutTitle('images/win.png');
-        const overlay = this.createModelOverlay('compressed/WinNecklace.glb');
+        const overlay = this.createModelOverlay('#winNecklace');
         const playAgainButton = this.createButtonWithText("Play Again", "green", "blue");
         overlay.appendChild(playAgainButton);
 
@@ -184,7 +184,7 @@ export class UISystem {
         prevButton.setAttribute('position', "1.32 2.645 17.344"); 
         //IF CLICK
         prevButton.addEventListener('click', () => {
-            this.showNextCutscene();
+            this.showPrevCutscene();
         });
 
         //Initialize buttons with click listeners
@@ -196,7 +196,7 @@ export class UISystem {
         nextButton.setAttribute('position', "1.32 1.5 17.344"); 
         //IF CLICK
         nextButton.addEventListener('click', () => {
-            this.showPrevCutscene();
+            this.showNextCutscene();
         });
 
         scene.appendChild(nextButton);
