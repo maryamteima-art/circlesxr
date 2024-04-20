@@ -37,16 +37,6 @@
       <audio id="SewingMachine" src="cards/SewingMachine.mp3"></audio>
       <audio id="Luggage" src="cards/Luggage.mp3"></audio>
 
-      <!--TRAIN ROOM-->
-      <a-asset-item id="train" src="compressed/Train.glb"></a-asset-item>
-
-      <!--OTHER INTERACTIVE MODELS-->
-      <a-asset-item id="suitcaseOpen" src="compressed/OpenSuitcase.glb"></a-asset-item>
-      <a-asset-item id="winNecklace" src="compressed/WinNecklace.glb"></a-asset-item>
-      <a-asset-item id="loseNecklace" src="compressed/LoseNecklace.glb"></a-asset-item>
-      <a-asset-item id="clockOpen" src="compressed/ClockOpen.glb"></a-asset-item>
-
-
       <!--BG-->
       <a-entity circles-sound="type:music; src:audios/Bg.mp3; autoplay:true; loop:true; volume:1;"></a-entity>
       <circles-assets/>
@@ -66,7 +56,7 @@
     <a-entity id="navmesh1" geometry="primitive: plane" visible='false' rotation="-90 -90 0" scale= "  127.33 10.14 0 "position = "0 0  -46.714" nav-mesh></a-entity>
 
     <!-- TRAIN GLTF/GLB SETTING -->
-    <a-entity gltf-model="#train"></a-entity>
+    <a-entity id = "train" gltf-model="compressed/Train.glb"></a-entity>
 
     <!--OBSERVATIONAL/STATIC PIECES-->
 
@@ -88,9 +78,9 @@
     <a-entity id = "sewingmachine" gltf-model="compressed/sewingMachine.glb" position = "-3.46 0.319 -69.81"></a-entity>
 
     <!-- CUTSCENES-->
-    <a-image id="cutsceneImage" src="images/scene1.png" position = "0 1.596 17.042" width="4" height="6" visible="true" rotation = "0 -180 0"></a-image>
+    <a-image id="cutsceneImage" src="images/scene1.png" position = "3.563 2.597 17.042" width="4" height="6" visible="true" rotation = "0 -180 0"></a-image>
     <!-- Text entity to display 'Story' above the cutscene -->
-    <a-text value="Story" color="#FFF" width="6" position="0.4 5 17.042" rotation="0 -180 0"></a-text>
+    <a-text value="Story" color="#FFF" width="6" position="3.563 6.2 17.042" rotation="0 -180 0"></a-text>
 
 
     <!--LIGHTS--->

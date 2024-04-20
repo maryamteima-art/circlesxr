@@ -20,7 +20,7 @@ export class UISystem {
     showGameOverOverlay(elapsedTime) {
         //Buttons
         //const overlay = this.createPlaneWithoutTitle('images/lose.png');
-        const overlay = this.createModelOverlay('#loseNecklace');
+        const overlay = this.createModelOverlay('compressed/LoseNecklace.glb');
         const retryButton = this.createButtonWithText("Retry", "red", "blue");
         overlay.appendChild(retryButton);
 
@@ -38,7 +38,7 @@ export class UISystem {
     showWinOverlay(elapsedTime) {
         //Button
         //const overlay = this.createPlaneWithoutTitle('images/win.png');
-        const overlay = this.createModelOverlay('#winNecklace');
+        const overlay = this.createModelOverlay('compressed/WinNecklace.glb');
         const playAgainButton = this.createButtonWithText("Play Again", "green", "blue");
         overlay.appendChild(playAgainButton);
 
@@ -179,24 +179,24 @@ export class UISystem {
         const prevButton = document.createElement('a-entity');
         prevButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(255,0,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
         //Shortening buttons (they were too tall by default)
-        prevButton.setAttribute('scale', "4 10 4");
+        prevButton.setAttribute('scale', "4 0.1 4");
         prevButton.setAttribute('rotation', `90 0 0`);
-        prevButton.setAttribute('position', "-2.540 2.645 17.344"); 
+        prevButton.setAttribute('position', "1.32 2.645 17.344"); 
         //IF CLICK
         prevButton.addEventListener('click', () => {
-            this.showPrevCutscene();
+            this.showNextCutscene();
         });
 
         //Initialize buttons with click listeners
         const nextButton = document.createElement('a-entity');
         nextButton.setAttribute('circles-button', `type: cylinder; button_color: rgb(0,255,0); button_color_hover: rgb(255,180,180); pedestal_color: rgb(255,255,0); diameter: 0.1`);
         //Shortening buttons (they were too tall by default)
-        nextButton.setAttribute('scale', "4 10 4");
+        nextButton.setAttribute('scale', "4 0.1 4");
         nextButton.setAttribute('rotation', `90 0 0`);
-        nextButton.setAttribute('position', "-2.540 1.5 17.344"); 
+        nextButton.setAttribute('position', "1.32 1.5 17.344"); 
         //IF CLICK
         nextButton.addEventListener('click', () => {
-            this.showNextCutscene();
+            this.showPrevCutscene();
         });
 
         scene.appendChild(nextButton);
